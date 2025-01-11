@@ -6,11 +6,20 @@ export type TUser = {
   email: string;
   dateCreated: Date;
   level: number;
-  projectProgress: TProjectProgress;
+  projectProgress: TProjectProgress | null;
+  isAdmin: boolean;
 };
 
 export type TLoginDetails = {
   email: string;
   password: string;
   redirectTo: string;
+};
+
+// Define the type for the context
+export type AuthContextType = {
+  user: TUser | undefined;
+  isLoading: boolean;
+  error: Error | undefined;
+  refetchUser: () => void;
 };

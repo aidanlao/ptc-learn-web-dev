@@ -1,6 +1,4 @@
 "use client";
-import { Input } from "@nextui-org/input";
-import { Kbd } from "@nextui-org/kbd";
 import {
   NavbarBrand,
   NavbarContent,
@@ -12,21 +10,23 @@ import {
 import { link as linkStyles } from "@nextui-org/theme";
 import clsx from "clsx";
 import NextLink from "next/link";
-import { useEffect } from "react";
+import { useContext } from "react";
 
-import { SearchIcon } from "@/components/icons";
+import { AuthContext } from "@/providers/authContext";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { useAuth } from "@/backend/auth/authHooks";
 
 export const Navbar = () => {
-  const { user, isLoading } = useAuth();
-
-
-
+  const { isLoading, user } = useContext(AuthContext);
 
   return (
     <NextUINavbar maxWidth="xl" position="sticky">
-      <NavbarContent className={clsx("basis-1/5 sm:basis-full transition duration-700", isLoading && "opacity-0")} justify="start">
+      <NavbarContent
+        className={clsx(
+          "basis-1/5 sm:basis-full transition duration-700",
+          isLoading && "opacity-0"
+        )}
+        justify="start"
+      >
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
             <p className="font-bold text-inherit">PTC Learn Web Dev</p>
@@ -35,11 +35,23 @@ export const Navbar = () => {
         <ul className="hidden sm:flex gap-4 justify-start ml-2">
           {!isLoading && user ? (
             <>
-              <NavbarItem key="piece-editor">
+              <NavbarItem key="projects">
                 <NextLink
                   className={clsx(
                     linkStyles({ color: "foreground" }),
-                    "data-[active=true]:text-primary data-[active=true]:font-medium",
+                    "data-[active=true]:text-primary data-[active=true]:font-medium"
+                  )}
+                  color="foreground"
+                  href={"/projects"}
+                >
+                  Projects
+                </NextLink>
+              </NavbarItem>
+              <NavbarItem key="learn">
+                <NextLink
+                  className={clsx(
+                    linkStyles({ color: "foreground" }),
+                    "data-[active=true]:text-primary data-[active=true]:font-medium"
                   )}
                   color="foreground"
                   href={"/learn"}
@@ -47,14 +59,29 @@ export const Navbar = () => {
                   Learn
                 </NextLink>
               </NavbarItem>
+              {user.isAdmin && (
+                <NavbarItem key="admin">
+                  <NextLink
+                    className={clsx(
+                      linkStyles({ color: "foreground" }),
+                      "data-[active=true]:text-primary data-[active=true]:font-medium"
+                    )}
+                    color="foreground"
+                    href={"/admin"}
+                  >
+                    Admin
+                  </NextLink>
+                </NavbarItem>
+              )}
             </>
           ) : (
             <>
               <NavbarItem key="login">
                 <NextLink
                   className={clsx(
-                    linkStyles({ color: "foreground" }), isLoading && "opacity-0",
-                    "data-[active=true]:text-primary data-[active=true]:font-medium",
+                    linkStyles({ color: "foreground" }),
+                    isLoading && "opacity-0",
+                    "data-[active=true]:text-primary data-[active=true]:font-medium"
                   )}
                   color="foreground"
                   href={"/login"}
@@ -68,7 +95,7 @@ export const Navbar = () => {
                   className={clsx(
                     linkStyles({ color: "foreground" }),
                     isLoading && "opacity-0",
-                    "data-[active=true]:text-primary data-[active=true]:font-medium",
+                    "data-[active=true]:text-primary data-[active=true]:font-medium"
                   )}
                   color="foreground"
                   href={"/register"}
@@ -91,8 +118,8 @@ export const Navbar = () => {
               <NavbarItem key="piece-editor">
                 <NextLink
                   className={clsx(
-                    linkStyles({ color: "foreground" }), 
-                    "data-[active=true]:text-primary data-[active=true]:font-medium",
+                    linkStyles({ color: "foreground" }),
+                    "data-[active=true]:text-primary data-[active=true]:font-medium"
                   )}
                   color="foreground"
                   href={"/learn"}
@@ -106,8 +133,9 @@ export const Navbar = () => {
               <NavbarItem key="login">
                 <NextLink
                   className={clsx(
-                    linkStyles({ color: "foreground" }), isLoading && "opacity-0",
-                    "data-[active=true]:text-primary data-[active=true]:font-medium",
+                    linkStyles({ color: "foreground" }),
+                    isLoading && "opacity-0",
+                    "data-[active=true]:text-primary data-[active=true]:font-medium"
                   )}
                   color="foreground"
                   href={"/login"}
@@ -119,8 +147,9 @@ export const Navbar = () => {
               <NavbarItem key="register">
                 <NextLink
                   className={clsx(
-                    linkStyles({ color: "foreground" }), isLoading && "opacity-0",
-                    "data-[active=true]:text-primary data-[active=true]:font-medium",
+                    linkStyles({ color: "foreground" }),
+                    isLoading && "opacity-0",
+                    "data-[active=true]:text-primary data-[active=true]:font-medium"
                   )}
                   color="foreground"
                   href={"/register"}

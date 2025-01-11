@@ -14,9 +14,7 @@ import { TUser } from "../types/authTypes";
 export function useAuth() {
   const [authUser, authLoading, error] = useAuthState(auth);
   const [isLoading, setLoading] = useState(true);
-  const [user, setUser] = useState<Record<string, TUser> | undefined>(
-    undefined,
-  );
+  const [user, setUser] = useState<TUser | undefined>(undefined);
   const router = useRouter();
 
   useEffect(() => {
@@ -26,7 +24,9 @@ export function useAuth() {
         const ref = doc(db, "users", authUser.uid);
         const docSnap = await getDoc(ref);
 
-        setUser(docSnap.data());
+        console.log("get uer");
+        console.log(docSnap.data());
+        setUser(docSnap.data() as TUser);
         setLoading(false);
       }
     }
@@ -43,13 +43,13 @@ export function useAuth() {
   }, [authLoading]);
 
   function refetchUser() {
+    setLoading(true);
     async function fetchData() {
-      setLoading(true);
       if (authUser) {
         const ref = doc(db, "users", authUser.uid);
         const docSnap = await getDoc(ref);
 
-        setUser(docSnap.data());
+        setUser(docSnap.data() as TUser);
         setLoading(false);
       }
     }
@@ -68,7 +68,7 @@ export function useAuth() {
   return { refetchUser, user, isLoading, error };
 }
 
-export function useLogin() {
+export function useLogin(refetchUser: () => void) {
   const [isLoading, setLoading] = useState(false);
   const router = useRouter();
   const [error, setError] = useState<string>();
@@ -88,7 +88,8 @@ export function useLogin() {
       await signInWithEmailAndPassword(auth, email, password);
       console.log("sign in success");
       router.push("/" + redirectTo);
-
+      refetchUser();
+      console.log("refresh complete");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       setError(e.message as string);
@@ -103,6 +104,7 @@ export function useLogin() {
 
 export function useRegister() {
   const [isLoading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const router = useRouter();
 
   async function register({
@@ -136,10 +138,8 @@ export function useRegister() {
           name: name,
           dateCreated: new Date(),
           level: 1,
-          projectProgress: {
-            projectID: "starter",
-            part: 0,
-          },
+          projectProgress: null,
+          isAdmin: false,
         };
 
         await setDoc(doc(db, "users", res.user.uid), userToAdd);
@@ -148,13 +148,14 @@ export function useRegister() {
       } catch (error) {
         console.log("error: " + error);
         console.log((error as any).message);
+        setError((error as any).message);
       } finally {
         setLoading(false);
       }
     }
   }
 
-  return { register, isLoading };
+  return { register, error, isLoading };
 }
 
 export function useLogout() {

@@ -7,7 +7,7 @@ import { useRegister } from "@/backend/auth/authHooks";
 import { Button } from "@nextui-org/button";
 export default function Register() {
   const router = useRouter();
-  const { register: signup } = useRegister();
+  const { register: signup, error } = useRegister();
   const { register, handleSubmit } = useForm();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -53,6 +53,11 @@ export default function Register() {
           <Button className="bg-primary text-slate-50" type="submit">
             Register
           </Button>
+          {error && (
+            <>
+              <p className="text-danger-500">{error}</p>
+            </>
+          )}
           <Button
             className="bg-secondary text-slate-50"
             onClick={() => {

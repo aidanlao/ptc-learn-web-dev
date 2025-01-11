@@ -7,10 +7,13 @@ import { Button } from "@nextui-org/button";
 
 import { TLoginDetails } from "@/backend/types/authTypes";
 import { useLogin } from "@/backend/auth/authHooks";
+import { useContext } from "react";
+import { AuthContext } from "@/providers/authContext";
 
 export default function Login() {
   const router = useRouter();
-  const { login, isLoading, error } = useLogin();
+  const { refetchUser } = useContext(AuthContext);
+  const { login, isLoading, error } = useLogin(refetchUser);
   const { register, handleSubmit } = useForm();
 
   async function handleLogin(data: TLoginDetails) {
@@ -60,9 +63,7 @@ export default function Login() {
               <p className="text-danger text-sm font-normal">
                 Error logging in. See console.
               </p>
-              <p className="text-danger text-sm font-light">
-                {error}
-              </p>
+              <p className="text-danger text-sm font-light">{error}</p>
             </>
           )}
           <Button
