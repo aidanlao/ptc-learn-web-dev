@@ -3,13 +3,12 @@ import { useEffect, useState } from "react";
 
 import { db } from "../firebase/firebase";
 import { TProject } from "../types/dataTypes";
-import {
-  incrementUserPartDb,
+import incrementUserPartDb, {
   nextUserPartDb,
   previousUserPartDb,
-} from "../user/hooks";
+} from "../user/dbFunctions";
 import { TUser } from "../types/authTypes";
-import { getProjectPart } from "../learn/hooks";
+import { getProjectPart } from "../learn/functions";
 
 export function useProjects() {
   const [projects, setProjects] = useState<TProject[] | undefined>(undefined);

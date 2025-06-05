@@ -140,6 +140,7 @@ export function useRegister() {
           dateCreated: new Date(),
           level: 1,
           projectProgress: null,
+          projectsCompleted: [],
           isAdmin: false,
         };
 

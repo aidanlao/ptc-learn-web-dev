@@ -8,6 +8,7 @@ export type TUser = {
   level: number;
   projectProgress: TProjectProgress | null;
   isAdmin: boolean;
+  projectsCompleted?: string[]; // Array of project IDs that the user has completed
 };
 
 export type TLoginDetails = {

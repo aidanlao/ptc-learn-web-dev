@@ -30,7 +30,34 @@ export async function setUserPartDb(
   }
 }
 
-export async function incrementUserPartDb(
+export async function setProjectAsCompletedDb(
+  user: TUser,
+  projectID: string
+): Promise<TSetDocResult> {
+  try {
+    const docRef = doc(db, "users", user.id); // Reference to the user's document
+
+    await updateDoc(docRef, {
+      projectProgress: null,
+      projectsCompleted: user.projectsCompleted
+        ? [...user.projectsCompleted, projectID]
+        : [projectID],
+    });
+
+    return {
+      success: true,
+    };
+  } catch (e: any) {
+    console.log(e);
+
+    return {
+      success: false,
+      message: e.message,
+    };
+  }
+}
+
+export default async function incrementUserPartDb(
   user: TUser,
   currentPart: number
 ): Promise<TSetDocResult> {

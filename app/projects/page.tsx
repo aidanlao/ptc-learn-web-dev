@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react";
 
 import { useProjects } from "@/backend/projects/hooks";
 import { TProject } from "@/backend/types/dataTypes";
-import { setProject } from "@/backend/user/hooks";
+import { setProject } from "@/backend/user/dbFunctions";
 import { AuthContext } from "@/providers/authContext";
 export default function Projects() {
   const { projects, projectsLoading } = useProjects();
