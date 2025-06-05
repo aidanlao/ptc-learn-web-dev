@@ -11,6 +11,7 @@ export default function Admin() {
   const { register, handleSubmit } = useForm();
   const { user, isLoading } = useContext(AuthContext);
   const router = useRouter();
+
   function handleFileUpload(data: any) {
     console.log("handl efile upload");
     console.log(data.file[0]);

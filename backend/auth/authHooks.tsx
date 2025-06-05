@@ -43,6 +43,7 @@ export function useAuth() {
   }, [authLoading]);
 
   function refetchUser() {
+    console.log("refetch use");
     setLoading(true);
     async function fetchData() {
       if (authUser) {

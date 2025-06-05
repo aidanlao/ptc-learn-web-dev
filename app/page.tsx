@@ -1,54 +1,71 @@
+"use client";
 import { Link } from "@nextui-org/link";
 import { Snippet } from "@nextui-org/snippet";
 import { Code } from "@nextui-org/code";
 import { button as buttonStyles } from "@nextui-org/theme";
-
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
 import { GithubIcon } from "@/components/icons";
+import { useContext } from "react";
+import { AuthContext } from "@/providers/authContext";
 
 export default function Home() {
+  const { isLoading, user } = useContext(AuthContext);
+
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
       <div className="inline-block max-w-xl text-center justify-center">
-        <span className={title()}>Make&nbsp;</span>
-        <span className={title({ color: "violet" })}>beautiful&nbsp;</span>
+        <span className={title()}>Learn by&nbsp;</span>
+        <span className={title({ color: "violet" })}>building&nbsp;</span>
         <br />
-        <span className={title()}>
-          websites regardless of your design experience.
-        </span>
+        <span className={title()}>real projects.</span>
         <div className={subtitle({ class: "mt-4" })}>
-          Beautiful, fast and modern React UI library.
+          Explore hands-on coding challenges and real-world projects to grow
+          your skills.
         </div>
       </div>
 
       <div className="flex gap-3">
-        <Link
-          isExternal
-          className={buttonStyles({
-            color: "primary",
-            radius: "full",
-            variant: "shadow",
-          })}
-          href={siteConfig.links.docs}
-        >
-          Documentation
-        </Link>
-        <Link
-          isExternal
-          className={buttonStyles({ variant: "bordered", radius: "full" })}
-          href={siteConfig.links.github}
-        >
-          <GithubIcon size={20} />
-          GitHub
-        </Link>
+        {!isLoading && user ? (
+          <Link
+            className={buttonStyles({
+              color: "primary",
+              radius: "full",
+              variant: "shadow",
+            })}
+            href="/projects"
+          >
+            Explore Projects
+          </Link>
+        ) : (
+          <>
+            <Link
+              className={buttonStyles({
+                color: "primary",
+                radius: "full",
+                variant: "shadow",
+              })}
+              href="/login"
+            >
+              Login
+            </Link>
+            <Link
+              className={buttonStyles({
+                color: "primary",
+                radius: "full",
+                variant: "shadow",
+              })}
+              href="/register"
+            >
+              Register
+            </Link>
+          </>
+        )}
       </div>
 
-      <div className="mt-8">
+      <div className="mt-2">
         <Snippet hideCopyButton hideSymbol variant="bordered">
-          <span>
-            Get started by editing <Code color="primary">app/page.tsx</Code>
-          </span>
+          <span>Start your journey by exploring projects</span>
         </Snippet>
       </div>
     </section>

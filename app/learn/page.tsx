@@ -1,77 +1,31 @@
 "use client";
 
 import Markdown from "markdown-to-jsx";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@nextui-org/button";
 
-import NextLink from "next/link";
-import { getProjectPart } from "@/backend/learn/hooks";
 import { useAuth } from "@/backend/auth/authHooks";
 import FinishPartModal from "@/components/finishPart";
-import { setUserPart } from "@/backend/user/hooks";
-import { Link } from "@nextui-org/link";
-import { Button } from "@nextui-org/button";
+import { useLearnInteractions } from "@/backend/projects/hooks";
+import { useContext } from "react";
+import { AuthContext } from "@/providers/authContext";
 
 export default function Learn() {
   const router = useRouter();
-  const { refetchUser, user, isLoading, error } = useAuth();
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [content, setContent] = useState<string>("Loading content...");
-
-  useEffect(() => {
-    const getContent = async () => {
-      try {
-        if (user && user.projectProgress) {
-          const content = await getProjectPart(
-            user.projectProgress.projectID,
-            user.projectProgress.part
-          );
-
-          setContent(content);
-
-          if (isTransitioning) {
-            setIsTransitioning(false);
-          }
-          console.log("the content in question");
-          console.log(content);
-        }
-      } catch (e) {
-        console.log("error");
-        console.log(e);
-      }
-    };
-
-    if (user && user.projectProgress) {
-      getContent();
-    }
-  }, [user]);
-
-  const incrementPart = async () => {
-    setIsTransitioning(true);
-    if (user) {
-      if (!user.projectProgress) {
-        throw Error("No user project progress found");
-      }
-
-      const setDocResult = await setUserPart(
-        user,
-        user.projectProgress.part + 1
-      );
-
-      if (setDocResult.success) {
-        if (user.projectProgress.part + 1 == user.projectProgress.totalParts) {
-          handleProjectCompletion();
-        } else {
-          await refetchUser();
-        }
-      }
-    }
-  };
+  const { refetchUser, user, isLoading, error } = useContext(AuthContext);
+  const {
+    content,
+    projectInfo,
+    isTransitioning,
+    incrementFurthestAchievedPart,
+    nextViewedPart,
+    previousViewedPart,
+  } = useLearnInteractions(user, handleProjectCompletion, refetchUser);
 
   if (isTransitioning) {
     return (
       <>
-        <p>Moving you to the next part of the project...</p>
+        <p>Loading part...</p>
       </>
     );
   }
@@ -96,13 +50,41 @@ export default function Learn() {
 
   return (
     <>
-      {!isLoading && user && user.projectProgress ? (
+      {!isLoading && user && user.projectProgress && projectInfo ? (
         <>
-          <FinishPartModal
-            incrementPart={incrementPart}
-            part={user.projectProgress.part}
-            user={user}
-          />
+          <div className="flex gap-5 justify-between items-center mb-5">
+            {user.projectProgress.currentPartViewed > 1 && (
+              <Button onPress={previousViewedPart}>Previous Part</Button>
+            )}
+            {user.projectProgress.currentPartViewed ==
+            user.projectProgress.furthestPartAchieved ? (
+              <FinishPartModal
+                incrementFurthestAchievedPart={incrementFurthestAchievedPart}
+                part={user.projectProgress.currentPartViewed}
+                user={user}
+                totalParts={projectInfo.totalParts}
+              />
+            ) : (
+              <Button onPress={nextViewedPart}>Next Part</Button>
+            )}
+          </div>
+          <div className="flex flex-col gap-2 mb-8">
+            <h1 className="text-xl font-bold">
+              Part {user.projectProgress.currentPartViewed}
+            </h1>
+            <p className="text-lg">
+              Progress: {user.projectProgress.furthestPartAchieved - 1} of{" "}
+              {projectInfo.totalParts} parts completed
+            </p>
+            {error && (
+              <p className="text-danger text-sm font-normal">
+                Error loading project content. See console.
+              </p>
+            )}
+          </div>
+
+          <p className="text-danger text-sm font-light">{error?.message}</p>
+
           <div className="w-full h-full flex flex-col gap-5 ">
             {content ? (
               <Markdown className="markdown">{content}</Markdown>
@@ -115,15 +97,13 @@ export default function Learn() {
         </>
       ) : (
         <>
-          <p>Loading user...</p>
+          <p>Loading user and project info...</p>
         </>
       )}
     </>
   );
 
   function handleProjectCompletion() {
-    setIsTransitioning(true);
-
     router.push("/projectcomplete");
   }
 }

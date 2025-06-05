@@ -2,8 +2,8 @@ import { TUser } from "./authTypes";
 
 export type TProjectProgress = {
   projectID: string;
-  part: number;
-  totalParts: number;
+  furthestPartAchieved: number;
+  currentPartViewed: number;
 };
 
 export type TAdminFileUpload = {

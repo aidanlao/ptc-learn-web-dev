@@ -7,6 +7,8 @@ module.exports = {
     "./app/**/*.tsx",
     "./app/**/page.tsx",
     "./app/admin/page.tsx",
+    "./app/learn/page.tsx",
+    "./app/projectcomplete/page.tsx",
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {

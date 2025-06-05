@@ -13,13 +13,15 @@ import { TUser } from "@/backend/types/authTypes";
 import { submitFileToFirebase } from "@/backend/submission/hooks";
 
 export default function FinishPartModal({
-  incrementPart,
+  incrementFurthestAchievedPart,
   user,
   part,
+  totalParts,
 }: {
-  incrementPart: Function;
+  incrementFurthestAchievedPart: Function;
   user: TUser;
   part: number;
+  totalParts: number;
 }) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const { register, handleSubmit } = useForm();
@@ -37,7 +39,7 @@ export default function FinishPartModal({
       });
 
       if (submissionResult.success) {
-        incrementPart();
+        incrementFurthestAchievedPart();
         onClose();
       } else {
         console.log("Error when submitting file to firebase");
@@ -51,7 +53,9 @@ export default function FinishPartModal({
   return (
     <>
       <Button onPress={onOpen} className="mb-5">
-        Finish this part
+        {user.projectProgress?.furthestPartAchieved == totalParts
+          ? "Finish Project"
+          : "Submit Work"}
       </Button>
       <Modal backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>

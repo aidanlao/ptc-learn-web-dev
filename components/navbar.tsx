@@ -18,13 +18,12 @@ import { ThemeSwitch } from "@/components/theme-switch";
 export const Navbar = () => {
   const { isLoading, user } = useContext(AuthContext);
 
+  const isLoggedIn = !!user;
+
   return (
     <NextUINavbar maxWidth="xl" position="sticky">
       <NavbarContent
-        className={clsx(
-          "basis-1/5 sm:basis-full transition duration-700",
-          isLoading && "opacity-0"
-        )}
+        className={clsx("basis-1/5 sm:basis-full transition duration-700")}
         justify="start"
       >
         <NavbarBrand as="li" className="gap-3 max-w-fit">
@@ -32,8 +31,9 @@ export const Navbar = () => {
             <p className="font-bold text-inherit">PTC Learn Web Dev</p>
           </NextLink>
         </NavbarBrand>
+
         <ul className="hidden sm:flex gap-4 justify-start ml-2">
-          {!isLoading && user ? (
+          {isLoggedIn ? (
             <>
               <NavbarItem key="projects">
                 <NextLink
@@ -41,8 +41,7 @@ export const Navbar = () => {
                     linkStyles({ color: "foreground" }),
                     "data-[active=true]:text-primary data-[active=true]:font-medium"
                   )}
-                  color="foreground"
-                  href={"/projects"}
+                  href="/projects"
                 >
                   Projects
                 </NextLink>
@@ -53,8 +52,7 @@ export const Navbar = () => {
                     linkStyles({ color: "foreground" }),
                     "data-[active=true]:text-primary data-[active=true]:font-medium"
                   )}
-                  color="foreground"
-                  href={"/learn"}
+                  href="/learn"
                 >
                   Learn
                 </NextLink>
@@ -66,98 +64,91 @@ export const Navbar = () => {
                       linkStyles({ color: "foreground" }),
                       "data-[active=true]:text-primary data-[active=true]:font-medium"
                     )}
-                    color="foreground"
-                    href={"/admin"}
+                    href="/admin"
                   >
                     Admin
                   </NextLink>
                 </NavbarItem>
               )}
             </>
-          ) : (
+          ) : !isLoading ? (
             <>
               <NavbarItem key="login">
                 <NextLink
                   className={clsx(
                     linkStyles({ color: "foreground" }),
-                    isLoading && "opacity-0",
                     "data-[active=true]:text-primary data-[active=true]:font-medium"
                   )}
-                  color="foreground"
-                  href={"/login"}
+                  href="/login"
                 >
                   Login
                 </NextLink>
               </NavbarItem>
-
               <NavbarItem key="register">
                 <NextLink
                   className={clsx(
                     linkStyles({ color: "foreground" }),
-                    isLoading && "opacity-0",
                     "data-[active=true]:text-primary data-[active=true]:font-medium"
                   )}
-                  color="foreground"
-                  href={"/register"}
+                  href="/register"
                 >
                   Register
                 </NextLink>
               </NavbarItem>
             </>
+          ) : (
+            <li></li>
           )}
         </ul>
+
         <ThemeSwitch />
       </NavbarContent>
-      <NavbarContent className={clsx("sm:hidden basis-1  pl-4")} justify="end">
+
+      <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
         <NavbarMenuToggle />
       </NavbarContent>
+
       <NavbarMenu>
         <div className="mx-4 mt-2 flex flex-col gap-2">
-          {!isLoading && user ? (
+          {isLoggedIn ? (
+            <NavbarItem key="learn-mobile">
+              <NextLink
+                className={clsx(
+                  linkStyles({ color: "foreground" }),
+                  "data-[active=true]:text-primary data-[active=true]:font-medium"
+                )}
+                href="/learn"
+              >
+                Learn
+              </NextLink>
+            </NavbarItem>
+          ) : !isLoading ? (
             <>
-              <NavbarItem key="piece-editor">
+              <NavbarItem key="login-mobile">
                 <NextLink
                   className={clsx(
                     linkStyles({ color: "foreground" }),
                     "data-[active=true]:text-primary data-[active=true]:font-medium"
                   )}
-                  color="foreground"
-                  href={"/learn"}
-                >
-                  Learn
-                </NextLink>
-              </NavbarItem>
-            </>
-          ) : (
-            <>
-              <NavbarItem key="login">
-                <NextLink
-                  className={clsx(
-                    linkStyles({ color: "foreground" }),
-                    isLoading && "opacity-0",
-                    "data-[active=true]:text-primary data-[active=true]:font-medium"
-                  )}
-                  color="foreground"
-                  href={"/login"}
+                  href="/login"
                 >
                   Login
                 </NextLink>
               </NavbarItem>
-
-              <NavbarItem key="register">
+              <NavbarItem key="register-mobile">
                 <NextLink
                   className={clsx(
                     linkStyles({ color: "foreground" }),
-                    isLoading && "opacity-0",
                     "data-[active=true]:text-primary data-[active=true]:font-medium"
                   )}
-                  color="foreground"
-                  href={"/register"}
+                  href="/register"
                 >
                   Register
                 </NextLink>
               </NavbarItem>
             </>
+          ) : (
+            <li></li>
           )}
         </div>
       </NavbarMenu>
