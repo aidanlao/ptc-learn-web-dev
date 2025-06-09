@@ -3,16 +3,18 @@
 import Markdown from "markdown-to-jsx";
 import { useRouter } from "next/navigation";
 import { Button } from "@nextui-org/button";
+import { useContext } from "react";
 
-import { useAuth } from "@/backend/auth/authHooks";
 import FinishPartModal from "@/components/finishPart";
 import { useLearnInteractions } from "@/backend/projects/hooks";
-import { useContext } from "react";
 import { AuthContext } from "@/providers/authContext";
+import { setProjectAsCompletedDb } from "@/backend/user/dbFunctions";
 
 export default function Learn() {
   const router = useRouter();
   const { refetchUser, user, isLoading, error } = useContext(AuthContext);
+
+  console.log(useContext(AuthContext));
   const {
     content,
     projectInfo,
@@ -61,8 +63,8 @@ export default function Learn() {
               <FinishPartModal
                 incrementFurthestAchievedPart={incrementFurthestAchievedPart}
                 part={user.projectProgress.currentPartViewed}
-                user={user}
                 totalParts={projectInfo.totalParts}
+                user={user}
               />
             ) : (
               <Button onPress={nextViewedPart}>Next Part</Button>
@@ -104,6 +106,12 @@ export default function Learn() {
   );
 
   function handleProjectCompletion() {
-    router.push("/projectcomplete");
+    if (user && projectInfo) {
+      setProjectAsCompletedDb(user, projectInfo.id);
+      router.push("/projectcomplete");
+      console.log("Project completed, setting in db");
+    } else {
+      console.error("User or project info not found for completion");
+    }
   }
 }

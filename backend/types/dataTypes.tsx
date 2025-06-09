@@ -37,7 +37,20 @@ export type TSetDocResult = {
 
 export type TProject = {
   name: string;
+  description: string;
   id: string;
+  imageAddress: string;
   totalParts: number;
   completionMessage: string;
+};
+
+export type TUserSubmission = {
+  part: number;
+  projectID: string;
+  submissionID: string;
+  userID: string;
+  timestamp: Date;
+  fileName: string;
+  approved: boolean;
+  fileType: string;
 };

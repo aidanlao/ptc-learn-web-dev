@@ -31,6 +31,10 @@ export async function submitFileToFirebase(
       userID: user.id,
       projectID: projectID,
       submissionID: submissionID,
+      approved: false,
+      fileName: fileToAdd.name,
+      fileType: fileToAdd.type,
+      timestamp: new Date(),
     };
 
     await setDoc(docRef, fileDataToAdd);

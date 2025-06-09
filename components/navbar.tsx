@@ -16,8 +16,11 @@ import { AuthContext } from "@/providers/authContext";
 import { ThemeSwitch } from "@/components/theme-switch";
 
 export const Navbar = () => {
-  const { isLoading, user } = useContext(AuthContext);
-
+  const context = useContext(AuthContext);
+  const { user, isLoading } = context;
+  if (!context) {
+    throw new Error("Navbar must be used within an AuthContext.Provider");
+  }
   const isLoggedIn = !!user;
 
   return (
@@ -58,17 +61,30 @@ export const Navbar = () => {
                 </NextLink>
               </NavbarItem>
               {user.isAdmin && (
-                <NavbarItem key="admin">
-                  <NextLink
-                    className={clsx(
-                      linkStyles({ color: "foreground" }),
-                      "data-[active=true]:text-primary data-[active=true]:font-medium"
-                    )}
-                    href="/admin"
-                  >
-                    Admin
-                  </NextLink>
-                </NavbarItem>
+                <>
+                  <NavbarItem key="admin">
+                    <NextLink
+                      className={clsx(
+                        linkStyles({ color: "foreground" }),
+                        "data-[active=true]:text-primary data-[active=true]:font-medium"
+                      )}
+                      href="/admin"
+                    >
+                      Admin
+                    </NextLink>
+                  </NavbarItem>
+                  <NavbarItem key="userSubmissions">
+                    <NextLink
+                      className={clsx(
+                        linkStyles({ color: "foreground" }),
+                        "data-[active=true]:text-primary data-[active=true]:font-medium"
+                      )}
+                      href="/submissions"
+                    >
+                      Submissions
+                    </NextLink>
+                  </NavbarItem>
+                </>
               )}
             </>
           ) : !isLoading ? (

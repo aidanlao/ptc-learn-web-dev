@@ -1,0 +1,112 @@
+import { useState, useEffect } from "react";
+import { collection, getDocs } from "firebase/firestore";
+
+import { db, storage } from "../firebase/firebase";
+import { TUser } from "../types/authTypes";
+import { TUserSubmission } from "../types/dataTypes";
+import { getBlob, getStorage, ref } from "firebase/storage";
+export const useUserSubmissions = () => {
+  const [users, setUsers] = useState<TUser[]>([]);
+  const [userIDToApprovedSubmissionsMap, setUserIDToSubmissionsMap] = useState<
+    Record<string, TUserSubmission[]>
+  >({});
+  const [
+    userIDToUnapprovedSubmissionsMap,
+    setUserIDToUnapprovedSubmissionsMap,
+  ] = useState<
+    Record<
+      string,
+      { submission: TUserSubmission; submissionFile: File | null }[]
+    >
+  >({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch users
+        const usersRef = collection(db, "users");
+        const userSnapshot = await getDocs(usersRef);
+        const usersData = userSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as TUser[];
+
+        // Fetch submissions
+        const submissionsRef = collection(db, "submissions");
+        const submissionSnapshot = await getDocs(submissionsRef);
+        const { approvedSubmissionsData, unapprovedSubmissionsData } =
+          await submissionSnapshot.docs.reduce(
+            async (accPromise, doc) => {
+              const acc = await accPromise;
+              const submission = doc.data() as TUserSubmission;
+              const userId = submission.userID;
+
+              if (!acc.approvedSubmissionsData[userId]) {
+                acc.approvedSubmissionsData[userId] = [];
+              }
+              if (!acc.unapprovedSubmissionsData[userId]) {
+                acc.unapprovedSubmissionsData[userId] = [];
+              }
+
+              if (!submission.approved) {
+                const fileRef = ref(storage, submission.submissionID);
+
+                try {
+                  const fileBlob = await getBlob(fileRef);
+                  const submissionFile = new File(
+                    [fileBlob],
+                    submission.submissionID,
+                    { type: fileBlob.type }
+                  );
+
+                  acc.unapprovedSubmissionsData[userId].push({
+                    submission,
+                    submissionFile,
+                  });
+                } catch (error) {
+                  console.error("Error fetching file:", error);
+                  acc.unapprovedSubmissionsData[userId].push({
+                    submission,
+                    submissionFile: null,
+                  });
+                }
+              }
+
+              if (submission.approved) {
+                acc.approvedSubmissionsData[userId].push(submission);
+              }
+
+              return acc;
+            },
+            Promise.resolve({
+              approvedSubmissionsData: {} as Record<string, TUserSubmission[]>,
+              unapprovedSubmissionsData: {} as Record<
+                string,
+                { submission: TUserSubmission; submissionFile: File | null }[]
+              >,
+            })
+          );
+
+        setUserIDToSubmissionsMap(approvedSubmissionsData);
+        setUserIDToUnapprovedSubmissionsMap(unapprovedSubmissionsData);
+        setUsers(usersData);
+        setLoading(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return {
+    users,
+    userIDToUnapprovedSubmissionsMap,
+    userIDToApprovedSubmissionsMap,
+    loading,
+    error,
+  };
+};

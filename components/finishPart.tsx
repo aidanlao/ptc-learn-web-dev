@@ -10,7 +10,7 @@ import {
 import { useForm } from "react-hook-form";
 
 import { TUser } from "@/backend/types/authTypes";
-import { submitFileToFirebase } from "@/backend/submission/hooks";
+import { submitFileToFirebase } from "@/backend/adminSubmission/hooks";
 
 export default function FinishPartModal({
   incrementFurthestAchievedPart,
