@@ -23,7 +23,7 @@ export default function Login() {
       redirectTo: "learn",
     });
   }
-
+  router.push("/register");
   return (
     <div className="w-full h-full flex justify-center">
       <div className="max-w-3xl mt-12">

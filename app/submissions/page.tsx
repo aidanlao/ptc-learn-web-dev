@@ -8,6 +8,7 @@ import { AuthContext } from "@/providers/authContext";
 import { useRouter } from "next/navigation";
 import { useUserSubmissions } from "@/backend/userSubmission/functions";
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
+import { SubmitSubmissionButton } from "@/components/submitSubmissionButton";
 /* eslint-disable jsx-a11y/label-has-associated-control */
 export default function UserSubmissions() {
   //const { register, handleSubmit } = useForm();
@@ -74,6 +75,9 @@ export default function UserSubmissions() {
                           <span className="text-tiny">
                             {submission.submission.submissionID}
                           </span>
+                          <SubmitSubmissionButton
+                            submissionID={submission.submission.submissionID}
+                          />
                         </li>
                       )
                     )}

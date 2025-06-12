@@ -31,7 +31,9 @@ export const Navbar = () => {
       >
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
-            <p className="font-bold text-inherit">PTC Learn Web Dev</p>
+            <p className="font-bold text-inherit blueTextGradient">
+              Learn Web Dev
+            </p>
           </NextLink>
         </NavbarBrand>
 
@@ -89,7 +91,7 @@ export const Navbar = () => {
             </>
           ) : !isLoading ? (
             <>
-              <NavbarItem key="login">
+              {/* <NavbarItem key="login">
                 <NextLink
                   className={clsx(
                     linkStyles({ color: "foreground" }),
@@ -99,7 +101,7 @@ export const Navbar = () => {
                 >
                   Login
                 </NextLink>
-              </NavbarItem>
+              </NavbarItem> */}
               <NavbarItem key="register">
                 <NextLink
                   className={clsx(
@@ -140,7 +142,7 @@ export const Navbar = () => {
             </NavbarItem>
           ) : !isLoading ? (
             <>
-              <NavbarItem key="login-mobile">
+              {/* <NavbarItem key="login-mobile">
                 <NextLink
                   className={clsx(
                     linkStyles({ color: "foreground" }),
@@ -150,7 +152,7 @@ export const Navbar = () => {
                 >
                   Login
                 </NextLink>
-              </NavbarItem>
+              </NavbarItem> */}
               <NavbarItem key="register-mobile">
                 <NextLink
                   className={clsx(

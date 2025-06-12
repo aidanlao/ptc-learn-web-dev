@@ -63,11 +63,13 @@ export default function Projects() {
   return (
     <>
       <div className="w-full h-full flex flex-col gap-3">
-        <h1 className="text-3xl font-bold py-5">Projects</h1>
+        <h1 className="text-3xl font-bold py-5 blueTextGradient">Projects</h1>
 
         {currentProject ? (
           <>
-            <Accordion className={`border-2 border-gray-200 rounded-lg `}>
+            <Accordion
+              className={`border shadow-lg border-gray-200 rounded-lg `}
+            >
               <AccordionItem
                 key={currentProject.id}
                 aria-label={currentProject.name}
@@ -122,7 +124,7 @@ export default function Projects() {
                   <>
                     {user?.projectsCompleted?.includes(project.id) ? (
                       <Accordion
-                        className={`border-2 border-green-200 rounded-lg bg-green-50 `}
+                        className={`border border-blue-200 rounded-lg bg-blue-50 shadow-lg`}
                       >
                         <AccordionItem
                           key={project.id}
@@ -170,7 +172,7 @@ export default function Projects() {
                         </AccordionItem>
                       </Accordion>
                     ) : (
-                      <Accordion className="border-2 border-gray-200 rounded-lg">
+                      <Accordion className="border shadow-lg border-gray-200 rounded-lg">
                         <AccordionItem
                           key={project.id}
                           aria-label={project.name}

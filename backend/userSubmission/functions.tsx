@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, updateDoc } from "firebase/firestore";
+import { getBlob, ref } from "firebase/storage";
 
 import { db, storage } from "../firebase/firebase";
 import { TUser } from "../types/authTypes";
 import { TUserSubmission } from "../types/dataTypes";
-import { getBlob, getStorage, ref } from "firebase/storage";
 export const useUserSubmissions = () => {
   const [users, setUsers] = useState<TUser[]>([]);
   const [userIDToApprovedSubmissionsMap, setUserIDToSubmissionsMap] = useState<
@@ -109,4 +109,25 @@ export const useUserSubmissions = () => {
     loading,
     error,
   };
+};
+
+export const approveSubmission = async (submissionID: string) => {
+  try {
+    const submissionsRef = collection(db, "submissions");
+    const querySnapshot = await getDocs(submissionsRef);
+    const submissionDoc = querySnapshot.docs.find(
+      (doc) => (doc.data() as TUserSubmission).submissionID === submissionID
+    );
+
+    if (submissionDoc) {
+      await updateDoc(submissionDoc.ref, { approved: true });
+
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    console.error("Error approving submission:", error);
+    throw error;
+  }
 };

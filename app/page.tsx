@@ -16,13 +16,14 @@ export default function Home() {
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
       <div className="inline-block max-w-xl text-center justify-center">
         <span className={title()}>Learn by&nbsp;</span>
-        <span className={title({ color: "violet" })}>building&nbsp;</span>
+        <span className={title({ color: "blue" })}>building&nbsp;</span>
         <br />
         <span className={title()}>real projects.</span>
         <div className={subtitle({ class: "mt-4" })}>
           Explore hands-on coding challenges and real-world projects to grow
           your skills.
         </div>
+        <h2 className="text-2xl font-bold">Launching on July 1st!</h2>
       </div>
 
       <div className="flex gap-3">
@@ -39,7 +40,7 @@ export default function Home() {
           </Link>
         ) : (
           <>
-            <Link
+            {/* <Link
               className={buttonStyles({
                 color: "primary",
                 radius: "full",
@@ -48,7 +49,7 @@ export default function Home() {
               href="/login"
             >
               Login
-            </Link>
+            </Link> */}
             <Link
               className={buttonStyles({
                 color: "primary",

@@ -126,3 +126,11 @@
   transform: translateY(-10px);
   transition: 0.5s;
 }
+
+
+.blueTextGradient {
+            background: linear-gradient(90deg, #0039e6 0%, #00d4ff 50%, #001f80 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+}
