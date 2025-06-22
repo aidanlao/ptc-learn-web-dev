@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 
 import { TLoginDetails } from "@/backend/types/authTypes";
 import { useLogin } from "@/backend/auth/authHooks";
@@ -23,7 +23,6 @@ export default function Login() {
       redirectTo: "learn",
     });
   }
-  router.push("/register");
   return (
     <div className="w-full h-full flex justify-center">
       <div className="max-w-3xl mt-12">

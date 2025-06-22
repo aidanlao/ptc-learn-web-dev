@@ -6,8 +6,8 @@ import {
   NavbarMenu,
   NavbarMenuToggle,
   Navbar as NextUINavbar,
-} from "@nextui-org/navbar";
-import { link as linkStyles } from "@nextui-org/theme";
+} from "@heroui/navbar";
+import { link as linkStyles } from "@heroui/theme";
 import clsx from "clsx";
 import NextLink from "next/link";
 import { useContext } from "react";
@@ -91,7 +91,7 @@ export const Navbar = () => {
             </>
           ) : !isLoading ? (
             <>
-              {/* <NavbarItem key="login">
+              <NavbarItem key="login">
                 <NextLink
                   className={clsx(
                     linkStyles({ color: "foreground" }),
@@ -101,7 +101,7 @@ export const Navbar = () => {
                 >
                   Login
                 </NextLink>
-              </NavbarItem> */}
+              </NavbarItem>
               <NavbarItem key="register">
                 <NextLink
                   className={clsx(
@@ -142,7 +142,7 @@ export const Navbar = () => {
             </NavbarItem>
           ) : !isLoading ? (
             <>
-              {/* <NavbarItem key="login-mobile">
+              <NavbarItem key="login-mobile">
                 <NextLink
                   className={clsx(
                     linkStyles({ color: "foreground" }),
@@ -152,7 +152,7 @@ export const Navbar = () => {
                 >
                   Login
                 </NextLink>
-              </NavbarItem> */}
+              </NavbarItem>
               <NavbarItem key="register-mobile">
                 <NextLink
                   className={clsx(

@@ -2,7 +2,7 @@ import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 import { db } from "../firebase/firebase";
-import { TProject } from "../types/dataTypes";
+import { TAchievement, TPart, TProject } from "../types/dataTypes";
 import incrementUserPartDb, {
   nextUserPartDb,
   previousUserPartDb,
@@ -97,7 +97,9 @@ export function useLearnInteractions(
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [content, setContent] = useState<string>("Loading content...");
   const [projectInfo, setProjectInfo] = useState<TProject | undefined>();
-
+  const [achievementList, setAchievementList] = useState<
+    TAchievement[] | undefined
+  >();
   console.log("use project part");
   const incrementFurthestAchievedPart = async () => {
     setIsTransitioning(true);
@@ -169,7 +171,7 @@ export function useLearnInteractions(
     const getContent = async () => {
       try {
         if (user && user.projectProgress) {
-          const content = await getProjectPart(
+          const { achievementList, content } = await getProjectPart(
             user.projectProgress.projectID,
             user.projectProgress.currentPartViewed
           );
@@ -177,6 +179,7 @@ export function useLearnInteractions(
 
           setContent(content);
           setProjectInfo(projectInfo);
+          setAchievementList(achievementList);
           if (isTransitioning) {
             setIsTransitioning(false);
           }
@@ -196,6 +199,7 @@ export function useLearnInteractions(
 
   return {
     projectInfo,
+    achievementList,
     content,
     isTransitioning,
     incrementFurthestAchievedPart,

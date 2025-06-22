@@ -1,4 +1,4 @@
-import { nextui } from "@nextui-org/theme";
+import { heroui } from "@heroui/theme";
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
     "./app/admin/page.tsx",
     "./app/learn/page.tsx",
     "./app/projectcomplete/page.tsx",
-    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -21,7 +21,7 @@ module.exports = {
   },
   darkMode: "class",
   plugins: [
-    nextui({
+    heroui({
       themes: {
         dark: {
           colors: {

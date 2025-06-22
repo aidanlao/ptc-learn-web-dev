@@ -1,7 +1,7 @@
 "use client";
-import { Image } from "@nextui-org/image";
+import { Image } from "@heroui/image";
 import { useContext, useEffect, useState } from "react";
-import { Accordion, AccordionItem } from "@nextui-org/accordion";
+import { Accordion, AccordionItem } from "@heroui/accordion";
 import { useRouter } from "next/navigation";
 
 import ConfirmProjectChangeModal from "@/components/confirmProjectChangeModal";
@@ -62,8 +62,10 @@ export default function Projects() {
 
   return (
     <>
-      <div className="w-full h-full flex flex-col gap-3">
-        <h1 className="text-3xl font-bold py-5 blueTextGradient">Projects</h1>
+      <div className="w-full h-full flex p-5 flex-col gap-3">
+        <h1 className="text-3xl font-bold py-5 w-fit blueTextGradient">
+          Projects
+        </h1>
 
         {currentProject ? (
           <>

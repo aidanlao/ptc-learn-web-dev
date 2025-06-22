@@ -18,6 +18,15 @@ export type TPart = {
   part: number;
   projectID: string;
 };
+export type TAchievement = {
+  id: string;
+  projectID: string;
+  part: number;
+  header: string;
+  desc: string;
+  pointsAwarded: number;
+  required: boolean;
+};
 
 export type TFileSubmission = {
   user: TUser;

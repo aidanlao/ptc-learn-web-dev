@@ -6,8 +6,8 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from "@nextui-org/modal";
-import { Button } from "@nextui-org/button";
+} from "@heroui/modal";
+import { Button } from "@heroui/button";
 
 interface ConfirmProjectChangeModalProps {
   isOpen: boolean;
@@ -27,12 +27,12 @@ export default function ConfirmProjectChangeModal({
         <ModalBody>
           <p>
             Starting a project erases any existing progress on an enrolled
-            project. Are you sure you want to switch?
+            project. Are you sure you want to start?
           </p>
         </ModalBody>
         <ModalFooter>
           <Button color="danger" onPress={onConfirm}>
-            Yes, switch
+            Yes
           </Button>
           <Button variant="light" onPress={onClose}>
             Cancel

@@ -1,13 +1,13 @@
 "use client";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { useForm } from "react-hook-form";
 import { useContext, useEffect } from "react";
-import { Image } from "@nextui-org/image";
+import { Image } from "@heroui/image";
 import { addPart } from "@/backend/admin/hooks";
 import { AuthContext } from "@/providers/authContext";
 import { useRouter } from "next/navigation";
 import { useUserSubmissions } from "@/backend/userSubmission/functions";
-import { Accordion, AccordionItem } from "@nextui-org/accordion";
+import { Accordion, AccordionItem } from "@heroui/accordion";
 import { SubmitSubmissionButton } from "@/components/submitSubmissionButton";
 /* eslint-disable jsx-a11y/label-has-associated-control */
 export default function UserSubmissions() {

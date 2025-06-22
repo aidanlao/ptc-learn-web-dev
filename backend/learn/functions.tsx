@@ -1,39 +1,48 @@
-import {
-  collection,
-  doc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 import { db } from "../firebase/firebase";
-import { TPart } from "../types/dataTypes";
-import { TUser } from "../types/authTypes";
+import { TAchievement, TPart } from "../types/dataTypes";
 
 export async function getProjectPart(projectID: string, partNum: number) {
-  console.log("trying to get part " + partNum + " from project" + projectID);
+  console.log("trying to get part " + partNum + " from project " + projectID);
+
+  // Get part data
   const partsCollection = collection(db, "parts");
-  const q = query(
+  const partQuery = query(
     partsCollection,
     where("projectID", "==", projectID),
     where("part", "==", partNum)
   );
-  const querySnapshot = await getDocs(q);
 
-  const partDocs = querySnapshot.docs[0];
-  const partData = partDocs ? (partDocs.data() as TPart) : undefined;
+  const partSnapshot = await getDocs(partQuery);
+  const partDoc = partSnapshot.docs[0];
+  const partData = partDoc ? (partDoc.data() as TPart) : undefined;
 
-  if (partData) {
-    const content = await getMarkdownContent(projectID, partData.fileID);
-
-    return content;
-  } else {
-    throw Error(
-      "Part data not found for " + projectID + ", partNum: " + partNum
-    );
+  if (!partData) {
+    throw new Error("Part data not found");
   }
+
+  // Get achievements
+  const achievementsCollection = collection(db, "achievements");
+  const achievementsQuery = query(
+    achievementsCollection,
+    where("projectID", "==", projectID),
+    where("part", "==", partNum)
+  );
+
+  const achievementsSnapshot = await getDocs(achievementsQuery);
+  const achievementList: TAchievement[] = achievementsSnapshot.docs.map(
+    (doc) =>
+      ({
+        ...doc.data(),
+      }) as TAchievement
+  );
+
+  // Get content using partData.fileID
+  const content = await getMarkdownContent(projectID, partData.fileID);
+
+  return { achievementList, content };
 }
 export async function getMarkdownContent(
   projectID: string,

@@ -129,8 +129,39 @@
 
 
 .blueTextGradient {
-            background: linear-gradient(90deg, #0039e6 0%, #00d4ff 50%, #001f80 100%);
+            background: linear-gradient(90deg, #0039e6 0%, #048ad7 50%, #4864b9 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+}
+.dark .blueTextGradient {
+            background: linear-gradient(90deg, #7f9fff 0%, #00d4ff 50%, #7f9eff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+}
+
+.dark .blue-bg-gradient {
+  background: linear-gradient(90deg, #041b5d 0%, #073d5c 50%, #1d3e64 100%);
+  color: white;
+  padding: 1rem;
+}
+.blue-bg-gradient {
+  background: linear-gradient(90deg, #0b429f 0%, #176aa1 50%, #1d8faf 100%);
+  color: black;
+  padding: 1rem;
+}
+
+.disabled {
+  opacity: 30% !important;
+}
+.dark .primary-button {
+  background-color: #007acc;
+  color: white;
+  cursor: pointer;
+}
+.primary-button {
+  background-color: #007acc;
+  color: white;
+  cursor: pointer;
 }

@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
 import { useRegister } from "@/backend/auth/authHooks";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 export default function Register() {
   const router = useRouter();
   const { register: signup, error } = useRegister();
