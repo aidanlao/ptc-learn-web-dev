@@ -30,7 +30,7 @@ export default function UserSubmissions() {
   return (
     <>
       {user && !isLoading && user.isAdmin ? (
-        <>
+        <div className="p-5">
           <h1 className="text-xl font-bold mb-5">User Submissions</h1>
           <Accordion>
             {users.map((user) => (
@@ -40,73 +40,77 @@ export default function UserSubmissions() {
                 title={user.name}
               >
                 <div className="p-3">
-                  {(userIDToUnapprovedSubmissionsMap[user.id]?.length +
+                  {userIDToUnapprovedSubmissionsMap[user.id]?.length +
                     userIDToApprovedSubmissionsMap[user.id]?.length ===
                     0 ||
-                    (!userIDToUnapprovedSubmissionsMap[user.id] &&
-                      !userIDToApprovedSubmissionsMap[user.id])) && (
+                  (!userIDToUnapprovedSubmissionsMap[user.id] &&
+                    !userIDToApprovedSubmissionsMap[user.id]) ? (
                     <li className="mb-2">
                       {}
                       No submissions found for this user.
                     </li>
-                  )}
-
-                  <ul className="mb-5">
-                    <h1 className="font-bold text-xl py-2">Unapproved</h1>
-                    {userIDToUnapprovedSubmissionsMap[user.id]?.map(
-                      (submission) => (
-                        <li
-                          key={submission.submission.submissionID}
-                          className="mb-2 border p-6 rounded-lg bg-gray-50"
-                        >
-                          <p className="font-bold">
-                            {submission.submission.projectID}, part{" "}
-                            {submission.submission.part}.<br></br>
-                          </p>
-                          {submission.submissionFile && (
-                            <Image
-                              className="max-h-96 w-100 rounded-lg"
-                              src={URL.createObjectURL(
-                                submission.submissionFile
+                  ) : (
+                    <>
+                      <ul className="mb-5">
+                        <h1 className="font-bold text-xl py-2">Unapproved</h1>
+                        {userIDToUnapprovedSubmissionsMap[user.id]?.map(
+                          (submission) => (
+                            <li
+                              key={submission.submission.submissionID}
+                              className="mb-2 border p-6 rounded-lg bg-gray-50"
+                            >
+                              <p className="font-bold">
+                                {submission.submission.projectID}, part{" "}
+                                {submission.submission.part}.<br></br>
+                              </p>
+                              {submission.submissionFile && (
+                                <Image
+                                  className="max-h-96 w-100 rounded-lg"
+                                  src={URL.createObjectURL(
+                                    submission.submissionFile
+                                  )}
+                                  alt="Submission preview"
+                                />
                               )}
-                              alt="Submission preview"
-                            />
-                          )}
-                          <span className="text-tiny">
-                            {submission.submission.submissionID}
-                          </span>
-                          <SubmitSubmissionButton
-                            submissionID={submission.submission.submissionID}
-                          />
-                        </li>
-                      )
-                    )}
-                  </ul>
-                  <hr className="my-10 border-gray-300" />
-                  <ul>
-                    <h1 className="font-bold text-xl py-2">Approved</h1>
-                    {userIDToApprovedSubmissionsMap[user.id]?.map(
-                      (submission) => (
-                        <li
-                          key={submission.submissionID}
-                          className="mb-2 border p-6 rounded-lg bg-gray-50"
-                        >
-                          <p className="font-bold">
-                            {submission.projectID}, part {submission.part}.
-                            <br></br>
-                            <span className="text-tiny">
-                              {submission.submissionID}
-                            </span>
-                          </p>
-                        </li>
-                      )
-                    )}
-                  </ul>
+                              <span className="text-tiny">
+                                {submission.submission.submissionID}
+                              </span>
+                              <SubmitSubmissionButton
+                                submissionID={
+                                  submission.submission.submissionID
+                                }
+                              />
+                            </li>
+                          )
+                        )}
+                      </ul>
+                      <hr className="my-10 border-gray-300" />
+                      <ul>
+                        <h1 className="font-bold text-xl py-2">Approved</h1>
+                        {userIDToApprovedSubmissionsMap[user.id]?.map(
+                          (submission) => (
+                            <li
+                              key={submission.submissionID}
+                              className="mb-2 border p-6 rounded-lg bg-gray-50"
+                            >
+                              <p className="font-bold">
+                                {submission.projectID}, part {submission.part}.
+                                <br></br>
+                                <span className="text-tiny">
+                                  {submission.submissionID}
+                                </span>
+                              </p>
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    </>
+                  )}
                 </div>
               </AccordionItem>
             ))}
           </Accordion>
-        </>
+        </div>
       ) : (
         <>
           <p>Loading...</p>

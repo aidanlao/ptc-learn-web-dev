@@ -97,7 +97,7 @@ export default function Admin() {
     <>
       {user && !isLoading && user.isAdmin && projects ? (
         <>
-          <div className="h-full w-full flex flex-col gap-5 justify-center">
+          <div className="p-5 h-full w-full flex flex-col gap-5 justify-center">
             <h1 className="text-4xl font-bold">Upload markdown files</h1>
             <p className="text-sm">
               Please note that submitting for a part that already exists results
