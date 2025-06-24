@@ -6,4 +6,5 @@ export const AuthContext = createContext<AuthContextType>({
   isLoading: true,
   error: undefined,
   refetchUser: () => {},
+  setUser: () => {},
 });

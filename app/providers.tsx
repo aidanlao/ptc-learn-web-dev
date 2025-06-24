@@ -16,13 +16,14 @@ export interface ProvidersProps {
 
 export function Providers({ children, themeProps }: ProvidersProps) {
   const router = useRouter();
-  const { refetchUser, user, isLoading, error } = useAuth();
+  const { refetchUser, setUser, user, isLoading, error } = useAuth();
   // Provide all values and functions in an object
   const value: AuthContextType = {
     user,
     isLoading,
     error,
     refetchUser,
+    setUser,
   };
 
   return (

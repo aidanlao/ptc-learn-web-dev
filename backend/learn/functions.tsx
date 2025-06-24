@@ -23,6 +23,21 @@ export async function getProjectPart(projectID: string, partNum: number) {
     throw new Error("Part data not found");
   }
 
+  // Get next part data too
+  const nextPartQuery = query(
+    partsCollection,
+    where("projectID", "==", projectID),
+    where("part", "==", partNum + 1)
+  );
+
+  const nextPartSnapshot = await getDocs(nextPartQuery);
+  const nextPartDoc = nextPartSnapshot.docs[0];
+  const nextPartData = nextPartDoc ? (nextPartDoc.data() as TPart) : undefined;
+
+  if (!partData) {
+    throw new Error("Part data not found");
+  }
+
   // Get achievements
   const achievementsCollection = collection(db, "achievements");
   const achievementsQuery = query(
@@ -42,7 +57,16 @@ export async function getProjectPart(projectID: string, partNum: number) {
   // Get content using partData.fileID
   const content = await getMarkdownContent(projectID, partData.fileID);
 
-  return { achievementList, content };
+  return {
+    achievementList,
+    content,
+    releaseDateOfNext: nextPartData
+      ? new Date(
+          (nextPartData.releaseDate as unknown as { seconds: number }).seconds *
+            1000
+        )
+      : new Date(0),
+  };
 }
 export async function getMarkdownContent(
   projectID: string,
@@ -69,8 +93,6 @@ export async function getMarkdownContent(
 
   // Get the text content of the markdown file
   const text = await response.text();
-
-  console.log("Fetched text content:", text);
 
   return text;
 }

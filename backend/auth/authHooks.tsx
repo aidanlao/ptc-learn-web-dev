@@ -66,7 +66,7 @@ export function useAuth() {
     }
   }
 
-  return { refetchUser, user, isLoading, error };
+  return { refetchUser, setUser, user, isLoading, error };
 }
 
 export function useLogin(refetchUser: () => void) {
@@ -135,6 +135,8 @@ export function useRegister() {
         console.log(res);
         const userToAdd: TUser = {
           id: res.user.uid,
+          points: 0,
+          achievementsCompleted: [],
           email: email,
           name: name,
           dateCreated: new Date(),

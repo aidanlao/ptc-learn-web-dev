@@ -5,21 +5,32 @@ import { useContext, useEffect, useState } from "react";
 import { Select, SelectItem } from "@heroui/select";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
+import { DatePicker } from "@heroui/date-picker";
+import { useDateFormatter } from "@react-aria/i18n";
+import {
+  parseDate,
+  getLocalTimeZone,
+  CalendarDate,
+} from "@internationalized/date";
 
-import AchievementInput from "./AchievementInput";
+import AchievementInput, { TAchievementInput } from "./AchievementInput";
 
 import { addAchievements, addPart } from "@/backend/admin/hooks";
 import { AuthContext } from "@/providers/authContext";
 import { useProjects } from "@/backend/projects/hooks";
-import { TAchievement } from "@/backend/types/dataTypes";
+
 /* eslint-disable jsx-a11y/label-has-associated-control */
 export default function Admin() {
-  // Add these inside the Admin component
+  const [date, setDate] = useState(parseDate("2024-04-04"));
+  const handleDateChange = (value: CalendarDate | null) => {
+    if (value) setDate(value);
+  };
+  let formatter = useDateFormatter({ dateStyle: "full" });
   const [achievements, setAchievements] = useState<
     { header: string; desc: string; pointsAwarded: number; required: boolean }[]
   >([{ header: "", desc: "", pointsAwarded: 0, required: true }]);
   const handleAchievementChange =
-    (index: number) => (achievement: TAchievement) => {
+    (index: number) => (achievement: TAchievementInput) => {
       const newAchievements = [...achievements];
 
       newAchievements[index] = achievement;
@@ -72,6 +83,7 @@ export default function Admin() {
 
       const partResponse = await addPart({
         ...data,
+        releaseDateOfNext: date.toDate(getLocalTimeZone()),
         fileID: `${selectedProject}-${data.part}`,
         projectID: selectedProject,
         part: parseInt(data.part),
@@ -170,6 +182,20 @@ export default function Admin() {
                   {...register("file")}
                 />
               </label>
+              <div className="flex flex-col gap-2">
+                <label className="text-2xl font-bold">Release Date</label>
+                <DatePicker
+                  label="Release Date"
+                  value={date}
+                  onChange={handleDateChange}
+                />
+                <p className="text-default-500 text-sm">
+                  Selected date:{" "}
+                  {date
+                    ? formatter.format(date.toDate(getLocalTimeZone()))
+                    : "--"}
+                </p>
+              </div>
               <Button className="py-2 px-5" type="submit">
                 Submit
               </Button>
@@ -180,7 +206,7 @@ export default function Admin() {
         </>
       ) : (
         <>
-          <p>Loading...</p>
+          <p className="p-5">Loading...</p>
         </>
       )}
     </>

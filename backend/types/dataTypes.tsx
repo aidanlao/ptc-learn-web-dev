@@ -9,12 +9,14 @@ export type TProjectProgress = {
 export type TAdminFileUpload = {
   fileID: string;
   projectID: string;
+  releaseDate: Date;
   part: number;
   file: File;
 };
 
 export type TPart = {
   fileID: string;
+  releaseDate: Date;
   part: number;
   projectID: string;
 };
@@ -31,6 +33,7 @@ export type TAchievement = {
 export type TFileSubmission = {
   user: TUser;
   file: File;
+  achievementID: string;
   partNum: number;
 };
 
@@ -57,6 +60,7 @@ export type TUserSubmission = {
   part: number;
   projectID: string;
   submissionID: string;
+  achievementID: string;
   userID: string;
   timestamp: Date;
   fileName: string;

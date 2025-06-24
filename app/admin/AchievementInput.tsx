@@ -3,13 +3,19 @@ import React from "react";
 import { TAchievement } from "@/backend/types/dataTypes";
 
 interface AchievementInputProps {
-  onAchievementChange: (achievement: TAchievement) => void;
+  onAchievementChange: (achievement: TAchievementInput) => void;
 }
 
+export type TAchievementInput = {
+  header: string;
+  desc: string;
+  pointsAwarded: number;
+  required: boolean;
+};
 const AchievementInput: React.FC<AchievementInputProps> = ({
   onAchievementChange,
 }) => {
-  const [achievement, setAchievement] = React.useState<TAchievement>({
+  const [achievement, setAchievement] = React.useState<TAchievementInput>({
     header: "",
     desc: "",
     pointsAwarded: 0,
@@ -22,7 +28,7 @@ const AchievementInput: React.FC<AchievementInputProps> = ({
     const { name, value } = e.target;
     const updatedAchievement = {
       ...achievement,
-      [name]: name === "points" ? Number(value) : value,
+      [name]: name === "pointsAwarded" ? Number(value) : value,
     };
 
     setAchievement(updatedAchievement);

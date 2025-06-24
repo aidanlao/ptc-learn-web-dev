@@ -2,7 +2,7 @@ import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 import { db } from "../firebase/firebase";
-import { TAchievement, TPart, TProject } from "../types/dataTypes";
+import { TAchievement, TProject } from "../types/dataTypes";
 import incrementUserPartDb, {
   nextUserPartDb,
   previousUserPartDb,
@@ -75,6 +75,7 @@ export function useCurrentProject(user: TUser | undefined) {
         setIsLoading(true);
         try {
           const project = await getProject(user.projectProgress.projectID);
+
           setProjectInfo(project);
         } catch (error) {
           console.error("Error fetching project info:", error);
@@ -94,13 +95,16 @@ export function useLearnInteractions(
   handleProjectCompletion: Function,
   refetchUser: Function
 ) {
+  const [releaseDateOfNext, setreleaseDateOfNext] = useState<Date | undefined>(
+    undefined
+  );
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [content, setContent] = useState<string>("Loading content...");
   const [projectInfo, setProjectInfo] = useState<TProject | undefined>();
   const [achievementList, setAchievementList] = useState<
     TAchievement[] | undefined
   >();
-  console.log("use project part");
+
   const incrementFurthestAchievedPart = async () => {
     setIsTransitioning(true);
     if (user) {
@@ -171,20 +175,20 @@ export function useLearnInteractions(
     const getContent = async () => {
       try {
         if (user && user.projectProgress) {
-          const { achievementList, content } = await getProjectPart(
-            user.projectProgress.projectID,
-            user.projectProgress.currentPartViewed
-          );
+          const { achievementList, content, releaseDateOfNext } =
+            await getProjectPart(
+              user.projectProgress.projectID,
+              user.projectProgress.currentPartViewed
+            );
           const projectInfo = await getProject(user.projectProgress.projectID);
 
           setContent(content);
           setProjectInfo(projectInfo);
+          setreleaseDateOfNext(releaseDateOfNext);
           setAchievementList(achievementList);
           if (isTransitioning) {
             setIsTransitioning(false);
           }
-          console.log("the content in question");
-          console.log(content);
         }
       } catch (e) {
         console.log("error");
@@ -199,6 +203,7 @@ export function useLearnInteractions(
 
   return {
     projectInfo,
+    releaseDateOfNext: releaseDateOfNext,
     achievementList,
     content,
     isTransitioning,

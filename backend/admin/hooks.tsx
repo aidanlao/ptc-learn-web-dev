@@ -27,6 +27,7 @@ export async function addPart(data: TAdminFileUpload) {
   try {
     const fileMetadata: TPart = {
       fileID: data.fileID,
+      releaseDate: data.releaseDate,
       projectID: data.projectID,
       part: data.part,
     };

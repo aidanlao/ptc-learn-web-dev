@@ -4,40 +4,71 @@ import { ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "../firebase/firebase";
 import { TFileSubmission, TFileSubmissionResult } from "../types/dataTypes";
 
-export async function submitFileToFirebase(
-  fileSubmission: TFileSubmission
+export async function submitAchievementListToFirebase(
+  fileSubmissionList: TFileSubmission[]
 ): Promise<TFileSubmissionResult> {
   try {
-    if (!fileSubmission.user.projectProgress) {
-      throw Error("No project progress found");
+    // Get all new achievement IDs from the submission list
+    const newAchievementIds = fileSubmissionList.map(
+      (submission) => submission.achievementID
+    );
+
+    // Get the user from the first submission (assuming all submissions are for the same user)
+    const user = fileSubmissionList[0]?.user;
+    if (!user) {
+      throw Error("No user found in submissions");
     }
-    const projectID = fileSubmission.user.projectProgress.projectID;
-    const part = fileSubmission.partNum;
-    const user = fileSubmission.user;
-    const fileToAdd = fileSubmission.file;
-    const submissionID =
-      user.id + "-" + projectID + "-" + part.toString() + "-" + fileToAdd.name;
 
-    // Upload to firebase storages
-    const storageRef = ref(storage, submissionID);
+    // Update user's achievements completed first
+    const userDocRef = doc(db, "users", user.id);
+    await setDoc(
+      userDocRef,
+      {
+        achievementsCompleted: [
+          ...(user.achievementsCompleted || []),
+          ...newAchievementIds,
+        ],
+      },
+      { merge: true }
+    );
 
-    uploadBytes(storageRef, fileToAdd).then((snapshot: any) => {
-      console.log("Uploaded a blob or file!");
-    });
-    // Upload to firestore db
-    const docRef = doc(db, "submissions", submissionID);
-    const fileDataToAdd = {
-      part: part,
-      userID: user.id,
-      projectID: projectID,
-      submissionID: submissionID,
-      approved: false,
-      fileName: fileToAdd.name,
-      fileType: fileToAdd.type,
-      timestamp: new Date(),
-    };
+    for (const fileSubmission of fileSubmissionList) {
+      if (!fileSubmission.user.projectProgress) {
+        throw Error("No project progress found");
+      }
+      const projectID = fileSubmission.user.projectProgress.projectID;
+      const part = fileSubmission.partNum;
+      const fileToAdd = fileSubmission.file;
+      const submissionID =
+        user.id +
+        "-" +
+        projectID +
+        "-" +
+        part.toString() +
+        "-" +
+        fileSubmission.achievementID;
 
-    await setDoc(docRef, fileDataToAdd);
+      // Upload to firebase storage
+      const storageRef = ref(storage, submissionID);
+      await uploadBytes(storageRef, fileToAdd);
+
+      // Upload to firestore db
+      const docRef = doc(db, "submissions", submissionID);
+      const fileDataToAdd = {
+        part: part,
+        userID: user.id,
+        projectID: projectID,
+        achievementID: fileSubmission.achievementID,
+        submissionID: submissionID,
+        approved: false,
+        fileName: fileToAdd.name,
+        fileType: fileToAdd.type,
+        timestamp: new Date(),
+      };
+
+      // Set the submission data in Firestore
+      await setDoc(docRef, fileDataToAdd);
+    }
 
     return {
       success: true,

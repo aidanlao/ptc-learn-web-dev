@@ -1,12 +1,19 @@
 import { useState } from "react";
 
-import { approveSubmission } from "../backend/userSubmission/functions";
+import {
+  approveSubmission,
+  assignPointsToUser,
+} from "../backend/userSubmission/functions";
 
 interface SubmitSubmissionButtonProps {
   submissionID: string;
+  userID: string;
+  pointsAwarded: number;
 }
 
 export const SubmitSubmissionButton = ({
+  userID,
+  pointsAwarded,
   submissionID,
 }: SubmitSubmissionButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,9 +22,14 @@ export const SubmitSubmissionButton = ({
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const success = await approveSubmission(submissionID);
+      const submissionApprovalSuccess = await approveSubmission(submissionID);
+      const assignPointsSuccess = await assignPointsToUser(
+        userID,
+        pointsAwarded
+      );
 
-      if (success) {
+      if (submissionApprovalSuccess && assignPointsSuccess) {
+        console.log("Submission approved and points assigned successfully.");
         setIsSubmitted(true);
       }
     } catch (error) {

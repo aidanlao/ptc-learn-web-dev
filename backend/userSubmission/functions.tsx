@@ -1,10 +1,16 @@
 import { useState, useEffect } from "react";
-import { collection, getDocs, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
 import { getBlob, ref } from "firebase/storage";
 
 import { db, storage } from "../firebase/firebase";
 import { TUser } from "../types/authTypes";
-import { TUserSubmission } from "../types/dataTypes";
+import { TAchievement, TUserSubmission } from "../types/dataTypes";
 export const useUserSubmissions = () => {
   const [users, setUsers] = useState<TUser[]>([]);
   const [userIDToApprovedSubmissionsMap, setUserIDToSubmissionsMap] = useState<
@@ -21,6 +27,8 @@ export const useUserSubmissions = () => {
   >({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [achievements, setAchievements] =
+    useState<Record<string, TAchievement>>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,6 +40,19 @@ export const useUserSubmissions = () => {
           id: doc.id,
           ...doc.data(),
         })) as TUser[];
+
+        // Fetch achievements
+        const achievementsRef = collection(db, "achievements");
+        const achievementSnapshot = await getDocs(achievementsRef);
+        const achievementsData = achievementSnapshot.docs.reduce(
+          (acc, doc) => ({
+            ...acc,
+            [doc.id]: doc.data(),
+          }),
+          {}
+        ) as Record<string, TAchievement>;
+
+        setAchievements(achievementsData);
 
         // Fetch submissions
         const submissionsRef = collection(db, "submissions");
@@ -104,13 +125,34 @@ export const useUserSubmissions = () => {
 
   return {
     users,
+    achievements,
     userIDToUnapprovedSubmissionsMap,
     userIDToApprovedSubmissionsMap,
     loading,
     error,
   };
 };
+export const assignPointsToUser = async (userID: string, points: number) => {
+  try {
+    const userRef = doc(db, "users", userID);
+    const userDoc = await getDoc(userRef);
 
+    if (userDoc.exists()) {
+      const userData = userDoc.data() as TUser;
+      const updatedPoints = (userData.points || 0) + points;
+
+      await updateDoc(userRef, { points: updatedPoints });
+
+      return true;
+    } else {
+      console.error("User not found");
+      return false;
+    }
+  } catch (error) {
+    console.error("Error assigning points to user:", error);
+    throw error;
+  }
+};
 export const approveSubmission = async (submissionID: string) => {
   try {
     const submissionsRef = collection(db, "submissions");

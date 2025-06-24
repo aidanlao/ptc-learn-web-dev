@@ -14,7 +14,7 @@ import {
 } from "@heroui/modal";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 
-import FinishPartModal from "@/components/finishPart";
+import AchievementUserSubmission from "@/components/achievementUserSubmission";
 import { useLearnInteractions } from "@/backend/projects/hooks";
 import { AuthContext } from "@/providers/authContext";
 import { setProjectAsCompletedDb } from "@/backend/user/dbFunctions";
@@ -24,22 +24,35 @@ export default function Learn() {
   const { refetchUser, user, isLoading, error } = useContext(AuthContext);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
-  console.log(useContext(AuthContext));
   const {
     content,
     achievementList,
     projectInfo,
+    releaseDateOfNext,
     isTransitioning,
     incrementFurthestAchievedPart,
     nextViewedPart,
     previousViewedPart,
   } = useLearnInteractions(user, handleProjectCompletion, refetchUser);
-
+  const nextPartText =
+    (user?.projectProgress?.furthestPartAchieved
+      ? user?.projectProgress?.furthestPartAchieved
+      : 0) == projectInfo?.totalParts &&
+    (user?.projectProgress?.currentPartViewed
+      ? user?.projectProgress?.currentPartViewed
+      : 0) == projectInfo?.totalParts
+      ? "Complete Project"
+      : "Next Part";
+  console.log(
+    user?.projectProgress?.currentPartViewed,
+    user?.projectProgress?.furthestPartAchieved,
+    projectInfo?.totalParts
+  );
   if (isTransitioning) {
     return (
-      <>
-        <p>Loading part...</p>
-      </>
+      <div>
+        <p className="p-5">Loading part...</p>
+      </div>
     );
   }
 
@@ -93,44 +106,36 @@ export default function Learn() {
               )}
             </div>
             <div>
-              {user.projectProgress.furthestPartAchieved ==
-                user.projectProgress.currentPartViewed && (
-                <>
-                  <Accordion
-                    className={`border shadow-lg p-5 border-gray-200 rounded-lg `}
-                  >
-                    <AccordionItem
-                      key="one"
-                      aria-label="Submission Instructions"
-                      className="[&[data-open=false]]:opacity-50"
-                      title={
-                        <div className="flex flex-col ">
-                          <h4 className="text-white text-large uppercase font-bold">
-                            Submission Instructions
-                          </h4>
-                        </div>
-                      }
-                    >
-                      <div className="flex flex-col gap-4 items-start">
-                        <p className="text-default-500 text-white">
-                          Submit a clear screenshot of your progress for this
-                          part. Please take a picture of the compiled website if
-                          you can, otherwise submit a picture of the code.
-                        </p>
-                        <FinishPartModal
-                          incrementFurthestAchievedPart={
-                            incrementFurthestAchievedPart
-                          }
-                          part={user.projectProgress.currentPartViewed}
-                          achievements={achievementList}
-                          totalParts={projectInfo.totalParts}
-                          user={user}
-                        />
+              <>
+                <Accordion
+                  className={`border shadow-lg p-5 border-gray-200 rounded-lg `}
+                >
+                  <AccordionItem
+                    key="one"
+                    aria-label="Submission Instructions"
+                    className="[&[data-open=false]]:opacity-50"
+                    title={
+                      <div className="flex flex-col ">
+                        <h4 className="text-white text-large uppercase font-bold">
+                          Achievements to complete
+                        </h4>
                       </div>
-                    </AccordionItem>
-                  </Accordion>
-                </>
-              )}
+                    }
+                  >
+                    <div className="flex flex-col gap-4 items-start">
+                      <p className="text-default-500 text-white">
+                        Submit a clear screenshot of your progress for this
+                        part. Please take a picture of the compiled website if
+                        applicable, otherwise submit a picture of the code.
+                      </p>
+                      <AchievementUserSubmission
+                        achievements={achievementList}
+                        totalParts={projectInfo.totalParts}
+                      />
+                    </div>
+                  </AccordionItem>
+                </Accordion>
+              </>
             </div>
           </div>
           <div className="flex p-5 gap-5 justify-between items-center ">
@@ -143,28 +148,62 @@ export default function Learn() {
             )}
             {user.projectProgress.currentPartViewed ==
             user.projectProgress.furthestPartAchieved ? (
-              <>
-                <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-                  <ModalContent>
-                    {(onClose) => (
-                      <>
-                        <ModalHeader>Submit your work first</ModalHeader>
-                        <ModalBody>
-                          To progress to the next part of the project, please
-                          submit at least one achievement for this part. <br />
-                          <br />
-                          Open the submission instructions accordion at the top
-                          or bottom of the page to submit.
-                        </ModalBody>
-                        <ModalFooter>
-                          <Button onPress={onClose}>Ok</Button>
-                        </ModalFooter>
-                      </>
-                    )}
-                  </ModalContent>
-                </Modal>
-                <Button onPress={onOpen}>Next Part</Button>
-              </>
+              releaseDateOfNext && new Date() < releaseDateOfNext ? (
+                <>
+                  <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                    <ModalContent>
+                      {(onClose) => (
+                        <>
+                          <ModalHeader>
+                            We&apos;re releasing this soon!{" "}
+                          </ModalHeader>
+                          <ModalBody>
+                            This part will be released on{" "}
+                            {releaseDateOfNext.toLocaleDateString()} at{" "}
+                            {releaseDateOfNext.toLocaleTimeString()}.
+                          </ModalBody>
+                          <ModalFooter>
+                            <Button onPress={onClose}>Ok</Button>
+                          </ModalFooter>
+                        </>
+                      )}
+                    </ModalContent>
+                  </Modal>
+                  <Button onPress={onOpen}>Next Part</Button>
+                </>
+              ) : !achievementList.some(
+                  (achievement) =>
+                    achievement.required &&
+                    !user.achievementsCompleted.includes(achievement.id)
+                ) ? (
+                <Button onPress={incrementFurthestAchievedPart}>
+                  {nextPartText}
+                </Button>
+              ) : (
+                <>
+                  <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                    <ModalContent>
+                      {(onClose) => (
+                        <>
+                          <ModalHeader>Submit your work first</ModalHeader>
+                          <ModalBody>
+                            To progress to the next part of the project, please
+                            submit all required achievements for this part.{" "}
+                            <br />
+                            <br />
+                            Open the submission instructions accordion at the
+                            top or bottom of the page to submit.
+                          </ModalBody>
+                          <ModalFooter>
+                            <Button onPress={onClose}>Ok</Button>
+                          </ModalFooter>
+                        </>
+                      )}
+                    </ModalContent>
+                  </Modal>
+                  <Button onPress={onOpen}>{nextPartText}</Button>
+                </>
+              )
             ) : (
               <Button onPress={nextViewedPart}>Next Part</Button>
             )}
@@ -191,6 +230,7 @@ export default function Learn() {
   function handleProjectCompletion() {
     if (user && projectInfo) {
       setProjectAsCompletedDb(user, projectInfo.id);
+      refetchUser();
       router.push("/projectcomplete");
       console.log("Project completed, setting in db");
     } else {

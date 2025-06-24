@@ -1,13 +1,11 @@
 "use client";
-import { Button } from "@heroui/button";
-import { useForm } from "react-hook-form";
 import { useContext, useEffect } from "react";
 import { Image } from "@heroui/image";
-import { addPart } from "@/backend/admin/hooks";
-import { AuthContext } from "@/providers/authContext";
 import { useRouter } from "next/navigation";
-import { useUserSubmissions } from "@/backend/userSubmission/functions";
 import { Accordion, AccordionItem } from "@heroui/accordion";
+
+import { AuthContext } from "@/providers/authContext";
+import { useUserSubmissions } from "@/backend/userSubmission/functions";
 import { SubmitSubmissionButton } from "@/components/submitSubmissionButton";
 /* eslint-disable jsx-a11y/label-has-associated-control */
 export default function UserSubmissions() {
@@ -18,6 +16,7 @@ export default function UserSubmissions() {
     users,
     userIDToUnapprovedSubmissionsMap,
     userIDToApprovedSubmissionsMap,
+    achievements,
     loading,
   } = useUserSubmissions();
 
@@ -29,7 +28,7 @@ export default function UserSubmissions() {
 
   return (
     <>
-      {user && !isLoading && user.isAdmin ? (
+      {user && !isLoading && user.isAdmin && achievements ? (
         <div className="p-5">
           <h1 className="text-xl font-bold mb-5">User Submissions</h1>
           <Accordion>
@@ -37,7 +36,13 @@ export default function UserSubmissions() {
               <AccordionItem
                 key={user.id}
                 aria-label={`${user.name}'s submissions`}
-                title={user.name}
+                title={
+                  <>
+                    {user.name} -{" "}
+                    {userIDToUnapprovedSubmissionsMap[user.id]?.length || 0}{" "}
+                    unapproved
+                  </>
+                }
               >
                 <div className="p-3">
                   {userIDToUnapprovedSubmissionsMap[user.id]?.length +
@@ -61,24 +66,51 @@ export default function UserSubmissions() {
                             >
                               <p className="font-bold">
                                 {submission.submission.projectID}, part{" "}
-                                {submission.submission.part}.<br></br>
+                                {submission.submission.part}.<br />
+                              </p>
+                              <p className="font-bold">
+                                {
+                                  achievements[
+                                    submission.submission.achievementID
+                                  ].header
+                                }
+                              </p>
+                              <p>
+                                {
+                                  achievements[
+                                    submission.submission.achievementID
+                                  ].desc
+                                }{" "}
+                                -{" "}
+                                {
+                                  achievements[
+                                    submission.submission.achievementID
+                                  ].pointsAwarded
+                                }{" "}
+                                points
                               </p>
                               {submission.submissionFile && (
                                 <Image
+                                  alt="Submission preview"
                                   className="max-h-96 w-100 rounded-lg"
                                   src={URL.createObjectURL(
                                     submission.submissionFile
                                   )}
-                                  alt="Submission preview"
                                 />
                               )}
                               <span className="text-tiny">
                                 {submission.submission.submissionID}
                               </span>
                               <SubmitSubmissionButton
+                                pointsAwarded={
+                                  achievements[
+                                    submission.submission.achievementID
+                                  ].pointsAwarded
+                                }
                                 submissionID={
                                   submission.submission.submissionID
                                 }
+                                userID={user.id}
                               />
                             </li>
                           )
@@ -95,7 +127,7 @@ export default function UserSubmissions() {
                             >
                               <p className="font-bold">
                                 {submission.projectID}, part {submission.part}.
-                                <br></br>
+                                <br />
                                 <span className="text-tiny">
                                   {submission.submissionID}
                                 </span>
@@ -113,7 +145,7 @@ export default function UserSubmissions() {
         </div>
       ) : (
         <>
-          <p>Loading...</p>
+          <p className="p-5">Loading...</p>
         </>
       )}
     </>
