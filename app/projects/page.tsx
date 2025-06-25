@@ -15,6 +15,9 @@ export default function Projects() {
   const [currentProject, setCurrentProject] = useState<TProject | null>(null);
   const router = useRouter();
 
+  if (user && !user?.isAdmin) {
+    router.push("/");
+  }
   useEffect(() => {
     if (projects) {
       const projectProgress = user?.projectProgress;
