@@ -83,7 +83,7 @@ export default function Admin() {
 
       const partResponse = await addPart({
         ...data,
-        releaseDateOfNext: date.toDate(getLocalTimeZone()),
+        releaseDate: date.toDate(getLocalTimeZone()),
         fileID: `${selectedProject}-${data.part}`,
         projectID: selectedProject,
         part: parseInt(data.part),

@@ -36,8 +36,9 @@ export async function addPart(data: TAdminFileUpload) {
     const storageID = data.projectID + "-" + data.fileID + ".md";
     const storageRef = ref(storage, storageID);
 
-    console.log("here's the file i'm about to upload");
+    console.log("here's the file i'm about to uploaffd");
     console.log(data.file);
+    console.log(fileMetadata);
     // 'file' comes from the Blob or File API
     uploadBytes(storageRef, data.file).then((snapshot: any) => {
       console.log("Uploaded a blob or file!");
