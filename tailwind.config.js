@@ -17,6 +17,38 @@ module.exports = {
         sans: ["var(--font-sans)"],
         mono: ["var(--font-mono)"],
       },
+      colors: {
+        "ptc-red": {
+          100: "#ff424f",
+          80: "#f8717b",
+          60: "#ffaeb4",
+        },
+        "ptc-orange": {
+          100: "#ff6830",
+          80: "#ff8456",
+          60: "#ffbfa7",
+        },
+        "ptc-yellow": {
+          100: "#ff8b0f",
+          80: "#ffa74a",
+          60: "#ffd09d",
+        },
+        "ptc-green": {
+          100: "#92af63",
+          80: "#b1c78c",
+          60: "#dbecbf",
+        },
+        "ptc-blue": {
+          100: "#1b9cf7",
+          80: "#7fc8fb",
+          60: "#c7e6fc",
+        },
+        "ptc-purple": {
+          100: "#7c72e8",
+          80: "#9e97ed",
+          60: "#bdb9e7",
+        },
+      }
     },
   },
   darkMode: "class",
