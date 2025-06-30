@@ -26,9 +26,15 @@ export default function Admin() {
     if (value) setDate(value);
   };
   let formatter = useDateFormatter({ dateStyle: "full" });
-  const [achievements, setAchievements] = useState<
-    { header: string; desc: string; pointsAwarded: number; required: boolean }[]
-  >([{ header: "", desc: "", pointsAwarded: 0, required: true }]);
+  const [achievements, setAchievements] = useState<TAchievementInput[]>([
+    {
+      header: "",
+      desc: "",
+      pointsAwarded: 0,
+      required: true,
+      isTextAchievement: false,
+    },
+  ]);
   const handleAchievementChange =
     (index: number) => (achievement: TAchievementInput) => {
       const newAchievements = [...achievements];
@@ -40,7 +46,13 @@ export default function Admin() {
   const addAchievementInput = () => {
     setAchievements([
       ...achievements,
-      { header: "", desc: "", pointsAwarded: 0, required: true },
+      {
+        header: "",
+        desc: "",
+        pointsAwarded: 0,
+        required: false,
+        isTextAchievement: false,
+      },
     ]);
   };
 

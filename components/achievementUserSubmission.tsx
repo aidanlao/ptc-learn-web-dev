@@ -15,7 +15,6 @@ import { toast } from "react-toastify";
 import { submitAchievementListToFirebase } from "@/backend/adminSubmission/hooks";
 import { TAchievement } from "@/backend/types/dataTypes";
 import { AuthContext } from "@/providers/authContext";
-import { TUser } from "@/backend/types/authTypes";
 
 export default function AchievementUserSubmission({
   achievements,
@@ -28,20 +27,24 @@ export default function AchievementUserSubmission({
     useContext(AuthContext);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const { register, handleSubmit } = useForm();
-  const [submittedFiles, setSubmittedFiles] = useState<{ [key: number]: File }>(
-    {}
-  );
-  const submitFiles = async () => {
+  const [submittedContent, setSubmittedContent] = useState<{
+    [key: number]: File | string;
+  }>({});
+  const submitContent = async () => {
     if (!user || user == null || !user.projectProgress) return;
-    if (Object.keys(submittedFiles).length === 0) {
+    if (Object.keys(submittedContent).length === 0) {
       console.log("No files submitted");
       toast.error("Please submit at least one file for your achievements");
 
       return;
     }
 
-    const invalidFiles = Object.values(submittedFiles).some(
-      (file) => !["image/png", "image/jpeg", "image/jpg"].includes(file.type)
+    const invalidFiles = Object.values(submittedContent).some(
+      (submission) =>
+        submission instanceof File &&
+        !["image/png", "image/jpeg", "image/jpg"].includes(
+          (submission as File).type
+        )
     );
 
     if (invalidFiles) {
@@ -52,10 +55,11 @@ export default function AchievementUserSubmission({
     const submissionList = [];
 
     for (let i = 0; i < achievements.length; i++) {
-      if (submittedFiles[i]) {
+      if (submittedContent[i]) {
         submissionList.push({
           user: user,
-          file: submittedFiles[i],
+          submissionContent: submittedContent[i],
+          isTextSubmission: achievements[i].isTextAchievement,
           achievementID: achievements[i].id,
           partNum: user.projectProgress.currentPartViewed,
         });
@@ -74,7 +78,7 @@ export default function AchievementUserSubmission({
           achievementsCompleted: [
             ...prevUser!.achievementsCompleted,
             ...achievements
-              .filter((_, i) => submittedFiles[i])
+              .filter((_, i) => submittedContent[i])
               .map((achievement) => achievement.id),
           ],
         }));
@@ -166,19 +170,37 @@ export default function AchievementUserSubmission({
                   </div>
 
                   <div className="mt-2">
-                    <input
-                      accept="image/*"
-                      className="file-upload-input text-sm "
-                      type="file"
-                      onChange={(e) => {
-                        if (e.target.files?.[0]) {
-                          setSubmittedFiles({
-                            ...submittedFiles,
-                            [index]: e.target.files[0],
+                    {achievement.isTextAchievement ? (
+                      <input
+                        className="w-full p-2 text-sm text-black rounded"
+                        type="text"
+                        placeholder="Enter your response"
+                        onChange={(e) => {
+                          setSubmittedContent((prevContent) => ({
+                            ...prevContent,
+                            [index]: e.target.value,
+                          }));
+                        }}
+                      />
+                    ) : (
+                      <input
+                        accept="image/*"
+                        className="file-upload-input text-sm"
+                        type="file"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          setSubmittedContent((prevFiles) => {
+                            const newFiles = { ...prevFiles };
+                            if (file) {
+                              newFiles[index] = file;
+                            } else {
+                              delete newFiles[index];
+                            }
+                            return newFiles;
                           });
-                        }
-                      }}
-                    />
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               </>
@@ -201,7 +223,7 @@ export default function AchievementUserSubmission({
               <>
                 <form
                   className="flex flex-col gap-4 p-6"
-                  onSubmit={handleSubmit(submitFiles)}
+                  onSubmit={handleSubmit(submitContent)}
                 >
                   <ModalHeader className="flex flex-col gap-1">
                     File Submission

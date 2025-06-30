@@ -3,7 +3,7 @@ import { useState } from "react";
 import {
   approveSubmission,
   assignPointsToUser,
-} from "../backend/userSubmission/functions";
+} from "../backend/submissionViewer/functions";
 
 interface SubmitSubmissionButtonProps {
   submissionID: string;

@@ -21,6 +21,7 @@ export type TPart = {
   projectID: string;
 };
 export type TAchievement = {
+  isTextAchievement: boolean;
   id: string;
   projectID: string;
   part: number;
@@ -32,8 +33,9 @@ export type TAchievement = {
 
 export type TFileSubmission = {
   user: TUser;
-  file: File;
+  submissionContent: File | string;
   achievementID: string;
+  isTextSubmission: boolean;
   partNum: number;
 };
 
@@ -60,10 +62,12 @@ export type TUserSubmission = {
   part: number;
   projectID: string;
   submissionID: string;
+  isTextSubmission: boolean;
   achievementID: string;
   userID: string;
+  submissionContent?: string | null;
   timestamp: Date;
-  fileName: string;
+  fileName?: string | null;
   approved: boolean;
-  fileType: string;
+  fileType?: string | null;
 };

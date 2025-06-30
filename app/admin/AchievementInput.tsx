@@ -1,7 +1,5 @@
 import React from "react";
 
-import { TAchievement } from "@/backend/types/dataTypes";
-
 interface AchievementInputProps {
   onAchievementChange: (achievement: TAchievementInput) => void;
 }
@@ -11,26 +9,48 @@ export type TAchievementInput = {
   desc: string;
   pointsAwarded: number;
   required: boolean;
+  isTextAchievement: boolean;
 };
 const AchievementInput: React.FC<AchievementInputProps> = ({
   onAchievementChange,
-}) => {
+}): JSX.Element => {
   const [achievement, setAchievement] = React.useState<TAchievementInput>({
     header: "",
     desc: "",
     pointsAwarded: 0,
     required: false,
+    isTextAchievement: false,
   });
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
+
+    if (type === "checkbox") {
+      const checked = (e.target as HTMLInputElement).checked;
+
+      if (!Object.hasOwn(achievement, name)) return;
+      const updatedAchievement = {
+        ...achievement,
+        [name]: checked,
+      };
+
+      console.log("updatedAchievement");
+      console.log(updatedAchievement);
+      setAchievement(updatedAchievement);
+      onAchievementChange(updatedAchievement);
+
+      return;
+    }
+
     const updatedAchievement = {
       ...achievement,
       [name]: name === "pointsAwarded" ? Number(value) : value,
     };
 
+    console.log("updatedAchievement");
+    console.log(updatedAchievement);
     setAchievement(updatedAchievement);
     onAchievementChange(updatedAchievement);
   };
@@ -96,6 +116,19 @@ const AchievementInput: React.FC<AchievementInputProps> = ({
           />
           <span className="text-sm font-medium text-gray-700">
             Required Achievement
+          </span>
+        </label>
+      </div>
+      <div>
+        <label className="flex items-center gap-2">
+          <input
+            checked={achievement.isTextAchievement}
+            name="isTextAchievement"
+            type="checkbox"
+            onChange={handleChange}
+          />
+          <span className="text-sm font-medium text-gray-700">
+            Is Text Achievement
           </span>
         </label>
       </div>

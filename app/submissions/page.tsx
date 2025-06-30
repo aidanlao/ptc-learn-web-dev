@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 
 import { AuthContext } from "@/providers/authContext";
-import { useUserSubmissions } from "@/backend/userSubmission/functions";
+import { useUserSubmissions } from "@/backend/submissionViewer/functions";
 import { SubmitSubmissionButton } from "@/components/submitSubmissionButton";
 /* eslint-disable jsx-a11y/label-has-associated-control */
 export default function UserSubmissions() {
