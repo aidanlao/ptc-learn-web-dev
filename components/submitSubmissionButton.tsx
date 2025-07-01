@@ -45,7 +45,7 @@ export const SubmitSubmissionButton = ({
       disabled={isLoading || isSubmitted}
       onClick={handleSubmit}
     >
-      {isLoading ? "Loading..." : isSubmitted ? "Submitted" : "Submit"}
+      {isLoading ? "Loading..." : isSubmitted ? "Approved" : "Approve"}
     </button>
   );
 };

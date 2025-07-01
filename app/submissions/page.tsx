@@ -89,16 +89,28 @@ export default function UserSubmissions() {
                                 }{" "}
                                 points
                               </p>
-                              {submission.submissionFile && (
-                                <Image
-                                  alt="Submission preview"
-                                  className="max-h-96 w-100 rounded-lg"
-                                  src={URL.createObjectURL(
-                                    submission.submissionFile
-                                  )}
-                                />
-                              )}
-                              <span className="text-tiny">
+                              <div className="my-5">
+                                {submission.submissionFile && (
+                                  <Image
+                                    alt="Submission preview"
+                                    className="max-h-96 w-100 rounded-lg"
+                                    src={URL.createObjectURL(
+                                      submission.submissionFile
+                                    )}
+                                  />
+                                )}
+
+                                <p className="font-bold mt-2">
+                                  Text Submission:
+                                </p>
+                                {submission.submission.submissionContent && (
+                                  <p className="">
+                                    {submission.submission.submissionContent}
+                                  </p>
+                                )}
+                              </div>
+
+                              <span className="text-tiny ">
                                 {submission.submission.submissionID}
                               </span>
                               <SubmitSubmissionButton
