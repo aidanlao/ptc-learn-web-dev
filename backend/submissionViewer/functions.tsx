@@ -11,6 +11,7 @@ import { getBlob, ref } from "firebase/storage";
 import { db, storage } from "../firebase/firebase";
 import { TUser } from "../types/authTypes";
 import { TAchievement, TUserSubmission } from "../types/dataTypes";
+import { P } from "framer-motion/dist/types.d-B_QPEvFK";
 export const useUserSubmissions = () => {
   const [users, setUsers] = useState<TUser[]>([]);
   const [userIDToApprovedSubmissionsMap, setUserIDToSubmissionsMap] = useState<
@@ -72,22 +73,29 @@ export const useUserSubmissions = () => {
               }
 
               if (!submission.approved) {
-                const fileRef = ref(storage, submission.submissionID);
+                if (!submission.isTextSubmission) {
+                  const fileRef = ref(storage, submission.submissionID);
 
-                try {
-                  const fileBlob = await getBlob(fileRef);
-                  const submissionFile = new File(
-                    [fileBlob],
-                    submission.submissionID,
-                    { type: fileBlob.type }
-                  );
+                  try {
+                    const fileBlob = await getBlob(fileRef);
+                    const submissionFile = new File(
+                      [fileBlob],
+                      submission.submissionID,
+                      { type: fileBlob.type }
+                    );
 
-                  acc.unapprovedSubmissionsData[userId].push({
-                    submission,
-                    submissionFile,
-                  });
-                } catch (error) {
-                  console.error("Error fetching file:", error);
+                    acc.unapprovedSubmissionsData[userId].push({
+                      submission,
+                      submissionFile,
+                    });
+                  } catch (error) {
+                    console.error("Error fetching file:", error);
+                    acc.unapprovedSubmissionsData[userId].push({
+                      submission,
+                      submissionFile: null,
+                    });
+                  }
+                } else {
                   acc.unapprovedSubmissionsData[userId].push({
                     submission,
                     submissionFile: null,
@@ -146,6 +154,7 @@ export const assignPointsToUser = async (userID: string, points: number) => {
       return true;
     } else {
       console.error("User not found");
+
       return false;
     }
   } catch (error) {

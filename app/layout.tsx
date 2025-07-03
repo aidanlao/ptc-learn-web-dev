@@ -9,6 +9,7 @@ import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 import { ToastContainer } from "react-toastify";
+import Footer from "@/components/footer";
 
 export const metadata: Metadata = {
   title: {
@@ -43,11 +44,12 @@ export default function RootLayout({
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <div className="relative flex flex-col h-screen">
+          <div className="relative flex flex-col min-h-screen">
             <Navbar />
             <main className="w-full">{children}</main>
             <ToastContainer position="bottom-right" />
           </div>
+          <Footer />
         </Providers>
       </body>
     </html>

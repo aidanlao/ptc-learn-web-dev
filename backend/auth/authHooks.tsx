@@ -13,13 +13,13 @@ import { TUser } from "../types/authTypes";
 
 export function useAuth() {
   const [authUser, authLoading, error] = useAuthState(auth);
-  const [isLoading, setLoading] = useState(true);
+  const [triggerLoading, setLoading] = useState(true);
   const [user, setUser] = useState<TUser | undefined>(undefined);
   const router = useRouter();
 
   useEffect(() => {
     async function fetchData() {
-      setLoading(true);
+      console.log("fetching data here since auth changed");
       if (authUser) {
         const ref = doc(db, "users", authUser.uid);
         const docSnap = await getDoc(ref);
@@ -35,38 +35,19 @@ export function useAuth() {
       if (authUser) {
         fetchData();
       } else {
-        console.log("You are not logged in");
+        setUser(undefined);
+        console.log("You are not logged in2");
         router.push("/");
         setLoading(false);
       } // Not signed in
     }
-  }, [authLoading]);
+  }, [authLoading, triggerLoading]);
 
   function refetchUser() {
-    console.log("refetch use");
     setLoading(true);
-    async function fetchData() {
-      if (authUser) {
-        const ref = doc(db, "users", authUser.uid);
-        const docSnap = await getDoc(ref);
-
-        setUser(docSnap.data() as TUser);
-        setLoading(false);
-      }
-    }
-
-    if (!authLoading) {
-      if (authUser) {
-        fetchData();
-      } else {
-        console.log("You are not logged in");
-        router.push("/");
-        setLoading(false);
-      } // Not signed in
-    }
   }
 
-  return { refetchUser, setUser, user, isLoading, error };
+  return { refetchUser, setUser, user, triggerLoading, error };
 }
 
 export function useLogin(refetchUser: () => void) {
@@ -167,6 +148,7 @@ export function useLogout() {
   const router = useRouter();
 
   async function logout() {
+    console.log("Logging out...");
     if (await signOut()) {
       console.log("Successfully signed out.");
       router.push("/login");

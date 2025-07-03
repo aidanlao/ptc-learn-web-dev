@@ -62,6 +62,7 @@ export const Navbar = () => {
                   Learn
                 </NextLink>
               </NavbarItem>
+
               {user.isAdmin && (
                 <>
                   <NavbarItem key="admin">
