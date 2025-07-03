@@ -12,7 +12,7 @@ import clsx from "clsx";
 import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 
-import { submitAchievementListToFirebase } from "@/backend/adminSubmission/hooks";
+import { submitAchievementListToFirebase } from "@/backend/userAchievementSubmission/hooks";
 import { TAchievement } from "@/backend/types/dataTypes";
 import { AuthContext } from "@/providers/authContext";
 

@@ -1,8 +1,9 @@
-import { doc, updateDoc } from "firebase/firestore";
+import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 
 import { db } from "../firebase/firebase";
 import { TUser } from "../types/authTypes";
 import { TProjectProgress, TSetDocResult } from "../types/dataTypes";
+import { useEffect, useState } from "react";
 
 export async function setUserPartDb(
   user: TUser,
@@ -190,4 +191,35 @@ export async function completeProject(user: TUser): Promise<TSetDocResult> {
       message: e.message,
     };
   }
+}
+export function useUsers() {
+  const [users, setUsers] = useState<TUser[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchUsers() {
+      try {
+        const usersRef = collection(db, "users");
+        const querySnapshot = await getDocs(usersRef);
+        const fetchedUsers: TUser[] = [];
+
+        querySnapshot.forEach((doc) => {
+          fetchedUsers.push({ id: doc.id, ...doc.data() } as TUser);
+        });
+
+        setUsers(fetchedUsers);
+        setError(null);
+      } catch (e: any) {
+        console.log(e);
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchUsers();
+  }, []);
+
+  return { users, loading, error };
 }
