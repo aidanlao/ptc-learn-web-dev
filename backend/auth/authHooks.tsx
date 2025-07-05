@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { setDoc, doc, getDoc } from "firebase/firestore";
 
-import { db, auth } from "../firebase/firebase";
+import { db, auth, signInWithGoogle, signInWithGitHub } from "../firebase/firebase";
 import { TRoute } from "../consts/route";
 import { TUser } from "../types/authTypes";
 
@@ -174,4 +174,86 @@ export function useLogout() {
   }
 
   return { logout, isLoading };
+}
+
+export function useGoogleLogin(refetchUser: () => void) {
+  const [isLoading, setLoading] = useState(false);
+  const router = useRouter();
+  const [error, setError] = useState<string>();
+
+  async function login({ redirectTo }: { redirectTo: TRoute }) {
+    setLoading(true);
+    try {
+      const result = await signInWithGoogle();
+      const user = result.user;
+      // Check if user doc exists, if not, create it
+      const ref = doc(db, "users", user.uid);
+      const docSnap = await getDoc(ref);
+      if (!docSnap.exists()) {
+        const userToAdd: TUser = {
+          id: user.uid,
+          points: 0,
+          achievementsCompleted: [],
+          email: user.email || "",
+          name: user.displayName || "",
+          dateCreated: new Date(),
+          level: 1,
+          projectProgress: null,
+          projectsCompleted: [],
+          isAdmin: false,
+        };
+        await setDoc(ref, userToAdd);
+      }
+      router.push("/" + redirectTo);
+      refetchUser();
+    } catch (e: any) {
+      setError(e.message as string);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return { login, isLoading, error };
+}
+
+export function useGitHubLogin(refetchUser: () => void) {
+  const [isLoading, setLoading] = useState(false);
+  const router = useRouter();
+  const [error, setError] = useState<string>();
+
+  async function login({ redirectTo }: { redirectTo: TRoute }) {
+    setLoading(true);
+    try {
+      const result = await signInWithGitHub();
+      const user = result.user;
+      // Check if user doc exists, if not, create it
+      const ref = doc(db, "users", user.uid);
+      const docSnap = await getDoc(ref);
+      if (!docSnap.exists()) {
+        const userToAdd: TUser = {
+          id: user.uid,
+          points: 0,
+          achievementsCompleted: [],
+          email: user.email || "",
+          name: user.displayName || "",
+          dateCreated: new Date(),
+          level: 1,
+          projectProgress: null,
+          projectsCompleted: [],
+          isAdmin: false,
+        };
+        await setDoc(ref, userToAdd);
+      }
+      router.push("/" + redirectTo);
+      refetchUser();
+    } catch (e: any) {
+      setError(e.message as string);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return { login, isLoading, error };
 }
