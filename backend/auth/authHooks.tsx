@@ -176,7 +176,7 @@ export function useLogout() {
   return { logout, isLoading };
 }
 
-// Google Login hoook using same logic as login with email and password
+// Google Login hook using same logic as login with email and password
 export function useGoogleLogin(refetchUser: () => void) {
   const [isLoading, setLoading] = useState(false);
   const router = useRouter();

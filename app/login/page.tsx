@@ -76,7 +76,7 @@ export default function Login() {
             Register for new account
           </Button>
         </form>
-        <div className="flex flex-col gap-2 mt-4">
+        <div className="flex flex-col gap-2 mt-3">
           <Button
             className="bg-blue-500 text-slate-50"
             onClick={() => googleLogin({ redirectTo: "learn" })}
