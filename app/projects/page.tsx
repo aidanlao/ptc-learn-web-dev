@@ -15,10 +15,6 @@ export default function Projects() {
   const [currentProject, setCurrentProject] = useState<TProject | null>(null);
   const router = useRouter();
 
-  // check if the user is an admin, if not redirect to home
-  if (user && !user?.isAdmin) {
-    router.push("/");
-  }
   useEffect(() => {
     if (projects) {
       const projectProgress = user?.projectProgress;
