@@ -6,7 +6,7 @@ import clsx from "clsx";
 import { Button } from "@heroui/button";
 
 import { TLoginDetails } from "@/backend/types/authTypes";
-import { useLogin } from "@/backend/auth/authHooks";
+import { useLogin, useGoogleLogin, useGitHubLogin } from "@/backend/auth/authHooks";
 import { useContext } from "react";
 import { AuthContext } from "@/providers/authContext";
 
@@ -14,6 +14,8 @@ export default function Login() {
   const router = useRouter();
   const { refetchUser } = useContext(AuthContext);
   const { login, isLoading, error } = useLogin(refetchUser);
+  const { login: googleLogin, isLoading: googleLoading, error: googleError } = useGoogleLogin(refetchUser);
+  const { login: githubLogin, isLoading: githubLoading, error: githubError } = useGitHubLogin(refetchUser);
   const { register, handleSubmit } = useForm();
 
   async function handleLogin(data: TLoginDetails) {
@@ -74,6 +76,28 @@ export default function Login() {
             Register for new account
           </Button>
         </form>
+        <div className="flex flex-col gap-2 mt-3">
+          <Button
+            className="bg-blue-500 text-slate-50"
+            onClick={() => googleLogin({ redirectTo: "learn" })}
+            disabled={googleLoading}
+          >
+            {googleLoading ? "Signing in with Google..." : "Sign in with Google"}
+          </Button>
+          {googleError && (
+            <p className="text-danger text-sm font-light">{googleError}</p>
+          )}
+          <Button
+            className="bg-gray-800 text-slate-50"
+            onClick={() => githubLogin({ redirectTo: "learn" })}
+            disabled={githubLoading}
+          >
+            {githubLoading ? "Signing in with GitHub..." : "Sign in with GitHub"}
+          </Button>
+          {githubError && (
+            <p className="text-danger text-sm font-light">{githubError}</p>
+          )}
+        </div>
       </div>
     </div>
   );
