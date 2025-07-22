@@ -26,6 +26,15 @@ export default function UserSubmissions() {
     }
   }, [user, isLoading]);
 
+  useEffect(() => {
+    console.log("Achiemevents");
+    console.log(achievements);
+    console.log("userIDTounappsorovedSubmissionsMap");
+    console.log(userIDToUnapprovedSubmissionsMap);
+    console.log("userIDToApprovedSubmissionsMap");
+    console.log(userIDToApprovedSubmissionsMap);
+  }, [achievements]);
+
   return (
     <>
       {user && !isLoading && user.isAdmin && achievements ? (
@@ -59,73 +68,89 @@ export default function UserSubmissions() {
                       <ul className="mb-5">
                         <h1 className="font-bold text-xl py-2">Unapproved</h1>
                         {userIDToUnapprovedSubmissionsMap[user.id]?.map(
-                          (submission) => (
-                            <li
-                              key={submission.submission.submissionID}
-                              className="mb-2 border p-6 rounded-lg bg-gray-50"
-                            >
-                              <p className="font-bold">
-                                {submission.submission.projectID}, part{" "}
-                                {submission.submission.part}.<br />
-                              </p>
-                              <p className="font-bold">
-                                {
-                                  achievements[
-                                    submission.submission.achievementID
-                                  ].header
-                                }
-                              </p>
-                              <p>
-                                {
-                                  achievements[
-                                    submission.submission.achievementID
-                                  ].desc
-                                }{" "}
-                                -{" "}
-                                {
-                                  achievements[
-                                    submission.submission.achievementID
-                                  ].pointsAwarded
-                                }{" "}
-                                points
-                              </p>
-                              <div className="my-5">
-                                {submission.submissionFile && (
-                                  <Image
-                                    alt="Submission preview"
-                                    className="max-h-96 w-100 rounded-lg"
-                                    src={URL.createObjectURL(
-                                      submission.submissionFile
-                                    )}
-                                  />
-                                )}
-
-                                <p className="font-bold mt-2">
-                                  Text Submission:
+                          (submission) => {
+                            if (
+                              achievements[
+                                submission.submission.achievementID
+                              ] == undefined
+                            ) {
+                              return (
+                                <p key={submission.submission.achievementID}>
+                                  Achievement with ID{" "}
+                                  {submission.submission.achievementID} not
+                                  found
                                 </p>
-                                {submission.submission.submissionContent && (
-                                  <p className="">
-                                    {submission.submission.submissionContent}
-                                  </p>
-                                )}
-                              </div>
+                              );
+                            }
 
-                              <span className="text-tiny ">
-                                {submission.submission.submissionID}
-                              </span>
-                              <SubmitSubmissionButton
-                                pointsAwarded={
-                                  achievements[
-                                    submission.submission.achievementID
-                                  ].pointsAwarded
-                                }
-                                submissionID={
-                                  submission.submission.submissionID
-                                }
-                                userID={user.id}
-                              />
-                            </li>
-                          )
+                            return (
+                              <li
+                                key={submission.submission.submissionID}
+                                className="mb-2 border p-6 rounded-lg bg-gray-50"
+                              >
+                                <p className="font-bold">
+                                  {submission.submission.projectID}, part{" "}
+                                  {submission.submission.part}.<br />
+                                </p>
+                                <p className="font-bold">
+                                  {
+                                    achievements[
+                                      submission.submission.achievementID
+                                    ].header
+                                  }
+                                </p>
+                                <p>
+                                  {
+                                    achievements[
+                                      submission.submission.achievementID
+                                    ].desc
+                                  }{" "}
+                                  -{" "}
+                                  {
+                                    achievements[
+                                      submission.submission.achievementID
+                                    ].pointsAwarded
+                                  }{" "}
+                                  points
+                                </p>
+                                <div className="my-5">
+                                  {submission.submissionFile && (
+                                    <Image
+                                      alt="Submission preview"
+                                      className="max-h-96 w-100 rounded-lg"
+                                      src={URL.createObjectURL(
+                                        submission.submissionFile
+                                      )}
+                                    />
+                                  )}
+
+                                  <p className="font-bold mt-2">
+                                    Text Submission:
+                                  </p>
+                                  {submission.submission.submissionContent && (
+                                    <p className="">
+                                      {submission.submission.submissionContent}
+                                    </p>
+                                  )}
+                                </div>
+
+                                <span className="text-tiny ">
+                                  {submission.submission.submissionID}
+                                </span>
+                                <SubmitSubmissionButton
+                                  pointsAwarded={
+                                    achievements[
+                                      submission.submission.achievementID
+                                    ].pointsAwarded
+                                  }
+                                  submissionID={
+                                    submission.submission.submissionID
+                                  }
+                                  userID={user.id}
+                                />
+                              </li>
+                            );
+                          }
                         )}
                       </ul>
                       <hr className="my-10 border-gray-300" />

@@ -118,6 +118,8 @@ export const useUserSubmissions = () => {
             })
           );
 
+        console.log("Approved Submissions Data:");
+        console.log(approvedSubmissionsData);
         setUserIDToSubmissionsMap(approvedSubmissionsData);
         setUserIDToUnapprovedSubmissionsMap(unapprovedSubmissionsData);
         setUsers(usersData);
